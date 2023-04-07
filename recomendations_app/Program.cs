@@ -20,14 +20,6 @@ namespace Recomendations_app
             builder.Services.ConfigureApplicationCookie(options =>
                 options.Cookie.SameSite = SameSiteMode.None
             );
-            if (!builder.Environment.IsDevelopment())
-            {
-                builder.Services.AddHttpsRedirection(options =>
-                {
-                    options.RedirectStatusCode = (int)HttpStatusCode.PermanentRedirect;
-                    options.HttpsPort = 443;
-                });
-            }
             builder.Services.AddAuthentication().AddFacebook(facebookOptions =>
             {
                 facebookOptions.AppId = "1884050778629364";
