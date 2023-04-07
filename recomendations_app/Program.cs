@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Recomendations_app.Data;
 using Recomendations_app.Models;
+using System.Net;
 
 namespace Recomendations_app
 {
@@ -19,6 +20,14 @@ namespace Recomendations_app
             builder.Services.ConfigureApplicationCookie(options =>
                 options.Cookie.SameSite = SameSiteMode.None
             );
+            if (!builder.Environment.IsDevelopment())
+            {
+                builder.Services.AddHttpsRedirection(options =>
+                {
+                    options.RedirectStatusCode = (int)HttpStatusCode.PermanentRedirect;
+                    options.HttpsPort = 443;
+                });
+            }
             builder.Services.AddAuthentication().AddFacebook(facebookOptions =>
             {
                 facebookOptions.AppId = "1884050778629364";
