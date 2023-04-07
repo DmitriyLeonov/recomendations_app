@@ -18,7 +18,7 @@ namespace Recomendations_app
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
             builder.Services.ConfigureApplicationCookie(options =>
-                options.Cookie.SameSite = SameSiteMode.None
+                options.Cookie.SameSite = SameSiteMode.Strict
             );
             builder.Services.AddAuthentication().AddFacebook(facebookOptions =>
             {
