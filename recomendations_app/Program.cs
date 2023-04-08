@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Recomendations_app.Data;
 using Recomendations_app.Models;
 using System.Net;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace Recomendations_app
 {
@@ -17,9 +18,11 @@ namespace Recomendations_app
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-            builder.Services.ConfigureApplicationCookie(options =>
-                options.Cookie.SameSite = SameSiteMode.Strict
-            );
+            builder.Services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
             builder.Services.AddAuthentication().AddFacebook(facebookOptions =>
             {
                 facebookOptions.AppId = "1884050778629364";
@@ -36,7 +39,20 @@ namespace Recomendations_app
             builder.Services.AddControllersWithViews();
             builder.Services.AddDataProtection();
             var app = builder.Build();
-
+            app.UseForwardedHeaders();
+            app.Use(async (context, next) =>
+            {
+                if (context.Request.IsHttps || context.Request.Headers["X-Forwarded-Proto"] == Uri.UriSchemeHttps)
+                {
+                    await next();
+                }
+                else
+                {
+                    string queryString = context.Request.QueryString.HasValue ? context.Request.QueryString.Value : string.Empty;
+                    var https = "https://" + context.Request.Host + context.Request.Path + queryString;
+                    context.Response.Redirect(https);
+                }
+            });
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
