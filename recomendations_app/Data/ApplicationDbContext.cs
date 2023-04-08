@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Recomendations_app.Models;
 
 namespace Recomendations_app.Data
 {
@@ -22,5 +24,12 @@ namespace Recomendations_app.Data
 
             builder.Entity<IdentityRole>().HasData(adminRole, userRole);
         }
+
+        public DbSet<ReviewModel>? Reviews { get; set; }
+        public DbSet<Comment>? Comments { get; set; }
+        public DbSet<GradeModel>? Grades { get; set; }
+        public DbSet<TagModel>? Tags { get; set; }
+        public DbSet<LikeModel>? Likes { get; set; }
+        public DbSet<SubjectModel>? Subjects { get; set; }
     }
 }
