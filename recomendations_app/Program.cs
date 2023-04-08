@@ -30,8 +30,8 @@ namespace Recomendations_app
                 facebookOptions.SendAppSecretProof = true;
             }).AddVkontakte(options =>
             {
-                options.ClientId = "51607307";
-                options.ClientSecret = "eLqJ3AAcYL1YwL1nsXNR";
+                options.ClientId = "51607883";
+                options.ClientSecret = "0hhoApJajyA7hn4FDEKr";
             });
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
