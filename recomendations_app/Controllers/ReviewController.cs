@@ -20,10 +20,9 @@ namespace Recomendations_app.Controllers
         }
 
         // GET: Review
-        public async Task<IActionResult> Index()
+        public ActionResult Index()
         {
-            var applicationDbContext = _context.Reviews.Include(r => r.Author).Include(r => r.Subject);
-            return View(await applicationDbContext.ToListAsync());
+            return Redirect("/");
         }
 
         // GET: Review/Details/5

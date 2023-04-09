@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Recomendations_app.Data;
 using Recomendations_app.Models;
 using System.Diagnostics;
 
@@ -7,15 +9,18 @@ namespace Recomendations_app.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var applicationDbContext = _context.Reviews.Include(r => r.Author).Include(r => r.Subject);
+            return View(await applicationDbContext.ToListAsync());
         }
 
         public IActionResult Privacy()
