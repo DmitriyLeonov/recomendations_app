@@ -12,7 +12,7 @@ namespace Recomendations_app.Models
         public long SubjectId { get; set; }
         public SubjectModel? Subject { get; set; }
         [Required]
-        public string AuthorId { get; set; } = string.Empty;
+        public string AuthorName { get; set; } = string.Empty;
         public UserModel? Author { get; set; }
     }
 }

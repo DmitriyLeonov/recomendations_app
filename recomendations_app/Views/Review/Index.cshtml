@@ -5,11 +5,11 @@
 @model IEnumerable<Recomendations_app.Models.ReviewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Search results";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Search result</h1>
 
 <p>
     <a asp-controller="Review" asp-action="Create">Create New</a>
@@ -32,7 +32,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.DateOfCreationInUTC)
             </th>
-            @*<th>
+           @* <th>
                 @Html.DisplayNameFor(model => model.Subject)
             </th>*@
             <th>

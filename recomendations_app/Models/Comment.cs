@@ -14,7 +14,7 @@ namespace Recomendations_app.Models
         [Required]
         public DateTime DateOfCreationInUTC { get; set; }
         [Required]
-        public string AuthorId { get; set; } = string.Empty;
+        public string AuthorName { get; set; } = string.Empty;
         public UserModel Author { get; set; }
         public string ReviewId { get; set; }
         public ReviewModel Review { get; set; }}

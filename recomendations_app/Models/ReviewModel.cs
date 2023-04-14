@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using Microsoft.VisualBasic;
+using NpgsqlTypes;
 
 namespace Recomendations_app.Models
 {
@@ -25,18 +26,20 @@ namespace Recomendations_app.Models
         [Required]
         public DateTime DateOfCreationInUTC { get; set; }
         [Required]
-        public long SubjectId { get; set; }
-        public SubjectModel Subject { get; set; } = new();
+        //public long SubjectId { get; set; }
+        //public SubjectModel Subject { get; set; } = new();
         public long? ReviewImageId { get; set; }
         public string? ImageLink { get; set; }
         [Required]
-        public string AuthorId { get; set; } = string.Empty;
-        public UserModel? Author { get; set; }
+        public string AuthorName { get; set; } = string.Empty;
+        //public UserModel? Author { get; set; }
         [NotMapped]
         public int? CommentsAmount { get; set; }
         [MaxLength(15, ErrorMessage = "Max amount of tags is exceeded")]
         public List<TagModel>? Tags { get; set; }
         public List<LikeModel> Likes { get; set; } = new();
+
+        public NpgsqlTsVector SearchVector { get; set; }
     }
 
     public enum Category

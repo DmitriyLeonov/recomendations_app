@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Recomendations_app.Data;
 using Recomendations_app.Models;
 
@@ -20,9 +21,14 @@ namespace Recomendations_app.Controllers
         }
 
         // GET: Review
-        public ActionResult Index()
+        public ActionResult Index(string query)
         {
-            return Redirect("/");
+            query = query.Trim();
+            query = query.Replace(" ", " <-> ");
+            var result = _context.Reviews.Where(x => 
+                x.SearchVector.Matches(EF.Functions.ToTsQuery($"{query}:*"))
+            ).ToList();
+            return View(result);
         }
 
         // GET: Review/Details/5
@@ -34,8 +40,8 @@ namespace Recomendations_app.Controllers
             }
 
             var reviewModel = await _context.Reviews
-                .Include(r => r.Author)
-                .Include(r => r.Subject)
+                //.Include(r => r.Author)
+                //.Include(r => r.Subject)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (reviewModel == null)
             {
@@ -48,7 +54,6 @@ namespace Recomendations_app.Controllers
         // GET: Review/Create
         public IActionResult Create()
         {
-            ViewData["AuthorId"] = new SelectList(_context.Set<UserModel>(), "Id", "Id");
             ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name");
             return View();
         }
@@ -58,16 +63,18 @@ namespace Recomendations_app.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,ReviewCategory,AuthorGrade,ReviewBody,DateOfCreationInUTC,SubjectId,ReviewImageId,ImageLink,AuthorId")] ReviewModel reviewModel)
+        public async Task<IActionResult> Create([Bind("Id,Title,ReviewCategory,AuthorGrade,ReviewBody,DateOfCreationInUTC,ReviewImageId,ImageLink,AuthorName")] ReviewModel reviewModel)
         {
-            if (ModelState.IsValid)
+            reviewModel.Id = Guid.NewGuid().ToString();
+            reviewModel.AuthorName = this.User.Identity.Name;
+            reviewModel.DateOfCreationInUTC = DateTime.UtcNow;
+            if (!ModelState.IsValid)
             {
                 _context.Add(reviewModel);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index","Home");
             }
-            ViewData["AuthorId"] = new SelectList(_context.Set<UserModel>(), "Id", "Id", reviewModel.AuthorId);
-            ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name", reviewModel.SubjectId);
+            //ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name", reviewModel.SubjectId);
             return View(reviewModel);
         }
 
@@ -84,8 +91,8 @@ namespace Recomendations_app.Controllers
             {
                 return NotFound();
             }
-            ViewData["AuthorId"] = new SelectList(_context.Set<UserModel>(), "Id", "Id", reviewModel.AuthorId);
-            ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name", reviewModel.SubjectId);
+            ViewData["AuthorName"] = new SelectList(_context.Set<UserModel>(), "Id", "Id", reviewModel.AuthorName);
+            //ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name", reviewModel.SubjectId);
             return View(reviewModel);
         }
 
@@ -94,7 +101,7 @@ namespace Recomendations_app.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Title,ReviewCategory,AuthorGrade,ReviewBody,DateOfCreationInUTC,SubjectId,ReviewImageId,ImageLink,AuthorId")] ReviewModel reviewModel)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,Title,ReviewCategory,AuthorGrade,ReviewBody,DateOfCreationInUTC,SubjectId,ReviewImageId,ImageLink,AuthorName")] ReviewModel reviewModel)
         {
             if (id != reviewModel.Id)
             {
@@ -119,10 +126,10 @@ namespace Recomendations_app.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index","Home");
             }
-            ViewData["AuthorId"] = new SelectList(_context.Set<UserModel>(), "Id", "Id", reviewModel.AuthorId);
-            ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name", reviewModel.SubjectId);
+            ViewData["AuthorName"] = new SelectList(_context.Set<UserModel>(), "Id", "Id", reviewModel.AuthorName);
+            //ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name", reviewModel.SubjectId);
             return View(reviewModel);
         }
 
@@ -135,8 +142,8 @@ namespace Recomendations_app.Controllers
             }
 
             var reviewModel = await _context.Reviews
-                .Include(r => r.Author)
-                .Include(r => r.Subject)
+                //.Include(r => r.Author)
+                //.Include(r => r.Subject)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (reviewModel == null)
             {
@@ -162,7 +169,7 @@ namespace Recomendations_app.Controllers
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Home");
         }
 
         private bool ReviewModelExists(string id)

@@ -4,9 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - recomendations_app</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/recomendations_app.styles.css" asp-append-version="true" />
 </head>
 <body>
     <header>
@@ -23,9 +22,14 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+
+                    <form class="d-flex" role="search">
+                        <input class="form-control me-2" type="search" name="query" placeholder="Search" aria-label="Search">
+                        <button asp-controller="Review" asp-action="Index" class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
                     <partial name="_LoginPartial" />
                 </div>
             </div>

@@ -23,6 +23,14 @@ namespace Recomendations_app.Data
             userRole.NormalizedName = userRole.Name.ToUpper();
 
             builder.Entity<IdentityRole>().HasData(adminRole, userRole);
+
+            builder.Entity<ReviewModel>()
+                .HasGeneratedTsVectorColumn(
+                    p => p.SearchVector,
+                    "english",
+                    p => new { p.ReviewBody, p.Title })
+                .HasIndex(p => p.SearchVector)
+                .HasMethod("GIN");
         }
 
         public DbSet<ReviewModel>? Reviews { get; set; }

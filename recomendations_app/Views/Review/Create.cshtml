@@ -14,18 +14,13 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ReviewCategory" class="control-label"></label>
-                <select asp-for="ReviewCategory" class="form-control"></select>
+                <select asp-for="ReviewCategory" class="form-control" asp-items="Html.GetEnumSelectList<Category>()"></select>
                 <span asp-validation-for="ReviewCategory" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -38,15 +33,10 @@
                 <input asp-for="ReviewBody" class="form-control" />
                 <span asp-validation-for="ReviewBody" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="DateOfCreationInUTC" class="control-label"></label>
-                <input asp-for="DateOfCreationInUTC" class="form-control" />
-                <span asp-validation-for="DateOfCreationInUTC" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label asp-for="SubjectId" class="control-label"></label>
                 <select asp-for="SubjectId" class ="form-control" asp-items="ViewBag.SubjectId"></select>
-            </div>
+            </div>*@
             <div class="form-group">
                 <label asp-for="ReviewImageId" class="control-label"></label>
                 <input asp-for="ReviewImageId" class="form-control" />
@@ -58,10 +48,6 @@
                 <span asp-validation-for="ImageLink" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="AuthorId" class="control-label"></label>
-                <select asp-for="AuthorId" class ="form-control" asp-items="ViewBag.AuthorId"></select>
-            </div>
-            <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
@@ -69,7 +55,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-controller="Home" asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
