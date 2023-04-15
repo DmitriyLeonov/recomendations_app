@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.IdentityModel.Tokens;
 using Recomendations_app.Data;
 using Recomendations_app.Models;
 
@@ -20,14 +21,17 @@ namespace Recomendations_app.Controllers
             _context = context;
         }
 
-        // GET: Review
         public ActionResult Index(string query)
         {
-            query = query.Trim();
-            query = query.Replace(" ", " <-> ");
-            var result = _context.Reviews.Where(x => 
-                x.SearchVector.Matches(EF.Functions.ToTsQuery($"{query}:*"))
-            ).ToList();
+            var result = new List<ReviewModel>();
+            if (!query.IsNullOrEmpty())
+            {
+                query = query.Trim();
+                query = query.Replace(" ", " <-> ");
+                result = _context.Reviews.Where(x =>
+                    x.SearchVector.Matches(EF.Functions.ToTsQuery($"{query}:*"))
+                ).ToList();
+            }
             return View(result);
         }
 
