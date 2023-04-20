@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using Microsoft.VisualBasic;
 using NpgsqlTypes;
+using Recomendations_app.CustomValidationAttributes;
 
 namespace Recomendations_app.Models
 {
@@ -28,8 +29,12 @@ namespace Recomendations_app.Models
         [Required]
         //public long SubjectId { get; set; }
         //public SubjectModel Subject { get; set; } = new();
-        public long? ReviewImageId { get; set; }
+        [MaxFileSize(1 * 3840 * 3840)]
+        [PermittedExtensions(new string[] { ".jpg", ".png", ".gif", ".jpeg" })]
+        [NotMapped]
+        public virtual IFormFile ImageFile { get; set; }
         public string? ImageLink { get; set; }
+        public string? ImageStorageName { get; set; }
         [Required]
         public string AuthorName { get; set; } = string.Empty;
         //public UserModel? Author { get; set; }

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using NpgsqlTypes;
 using Recomendations_app.Data;
 
 #nullable disable
@@ -12,8 +13,8 @@ using Recomendations_app.Data;
 namespace Recomendations_app.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230414121117_init")]
-    partial class init
+    [Migration("20230420182604_imageFile")]
+    partial class imageFile
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,13 +54,13 @@ namespace Recomendations_app.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "f8f3710f-4047-4a64-abb2-ac787dfe70e4",
+                            Id = "e2079ab8-599d-4db9-a36c-a370baf3b011",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "ad2195c7-ee02-4063-84c9-541dd8296ab1",
+                            Id = "7348d976-5f44-4a83-8afa-fa9f4b68f365",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -363,6 +364,9 @@ namespace Recomendations_app.Migrations
                     b.Property<string>("ImageLink")
                         .HasColumnType("text");
 
+                    b.Property<string>("ImageStorageName")
+                        .HasColumnType("text");
+
                     b.Property<string>("ReviewBody")
                         .IsRequired()
                         .HasMaxLength(5000)
@@ -371,9 +375,12 @@ namespace Recomendations_app.Migrations
                     b.Property<int>("ReviewCategory")
                         .HasColumnType("integer");
 
-                    b.Property<long?>("ImageStorageName")
+                    b.Property<NpgsqlTsVector>("SearchVector")
                         .IsRequired()
-                        .HasColumnType("bigint");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("tsvector")
+                        .HasAnnotation("Npgsql:TsVectorConfig", "english")
+                        .HasAnnotation("Npgsql:TsVectorProperties", new[] { "ReviewBody", "Title" });
 
                     b.Property<long?>("SubjectModelId")
                         .HasColumnType("bigint");
@@ -384,6 +391,10 @@ namespace Recomendations_app.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SearchVector");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("SearchVector"), "GIN");
 
                     b.HasIndex("SubjectModelId");
 

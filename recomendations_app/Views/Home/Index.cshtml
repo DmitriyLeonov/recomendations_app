@@ -35,9 +35,7 @@
             @*<th>
                 @Html.DisplayNameFor(model => model.Subject)
             </th>*@
-            <th>
-                @Html.DisplayNameFor(model => model.ReviewImageId)
-            </th>
+           
             <th>
                 @Html.DisplayNameFor(model => model.ImageLink)
             </th>
@@ -69,12 +67,13 @@
                 @*<td>
                     @Html.DisplayFor(modelItem => item.Subject.Name)
                 </td>*@
-                <td>
-                    @Html.DisplayFor(modelItem => item.ReviewImageId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ImageLink)
-                </td>
+                @if (item.ImageLink != null)
+                {
+                    <td>
+                        <img src="@Url.Content(item.ImageLink)" alt="Image" style="width: 150px; height: 220px;"/>
+                    </td>
+                }
+                @*
                 @*<td>
                     @Html.DisplayFor(modelItem => item.Author.Id)
                 </td>*@

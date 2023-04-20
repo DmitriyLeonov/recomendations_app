@@ -51,13 +51,13 @@ namespace Recomendations_app.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "41562c33-bb9c-45f8-a620-f972f828ab23",
+                            Id = "e2079ab8-599d-4db9-a36c-a370baf3b011",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "50916680-3b9c-4f51-872a-4204f6493a4f",
+                            Id = "7348d976-5f44-4a83-8afa-fa9f4b68f365",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -361,6 +361,9 @@ namespace Recomendations_app.Migrations
                     b.Property<string>("ImageLink")
                         .HasColumnType("text");
 
+                    b.Property<string>("ImageStorageName")
+                        .HasColumnType("text");
+
                     b.Property<string>("ReviewBody")
                         .IsRequired()
                         .HasMaxLength(5000)
@@ -368,10 +371,6 @@ namespace Recomendations_app.Migrations
 
                     b.Property<int>("ReviewCategory")
                         .HasColumnType("integer");
-
-                    b.Property<long?>("ReviewImageId")
-                        .IsRequired()
-                        .HasColumnType("bigint");
 
                     b.Property<NpgsqlTsVector>("SearchVector")
                         .IsRequired()

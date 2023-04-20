@@ -5,6 +5,7 @@ using Recomendations_app.Data;
 using Recomendations_app.Models;
 using System.Net;
 using Microsoft.AspNetCore.HttpOverrides;
+using Recomendations_app.CloudStorage;
 
 namespace Recomendations_app
 {
@@ -36,6 +37,7 @@ namespace Recomendations_app
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+            builder.Services.AddSingleton<ICloudStorage, GoogleCloudStorage>();
             builder.Services.AddControllersWithViews();
             builder.Services.AddDataProtection();
             var app = builder.Build();

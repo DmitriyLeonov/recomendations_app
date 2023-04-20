@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
+using Recomendations_app.CloudStorage;
 using Recomendations_app.Data;
 using Recomendations_app.Models;
 
@@ -15,10 +16,12 @@ namespace Recomendations_app.Controllers
     public class ReviewController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ICloudStorage _cloudStorage;
 
-        public ReviewController(ApplicationDbContext context)
+        public ReviewController(ApplicationDbContext context, ICloudStorage cloudStorage)
         {
             _context = context;
+            _cloudStorage = cloudStorage;
         }
 
         public ActionResult Index(string query)
@@ -67,13 +70,17 @@ namespace Recomendations_app.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,ReviewCategory,AuthorGrade,ReviewBody,DateOfCreationInUTC,ReviewImageId,ImageLink,AuthorName")] ReviewModel reviewModel)
+        public async Task<IActionResult> Create([Bind("Id,Title,ReviewCategory,AuthorGrade,ReviewBody,DateOfCreationInUTC,ImageStorageName,ImageLink,AuthorName,ImageFile")] ReviewModel reviewModel)
         {
             reviewModel.Id = Guid.NewGuid().ToString();
             reviewModel.AuthorName = this.User.Identity.Name;
             reviewModel.DateOfCreationInUTC = DateTime.UtcNow;
             if (!ModelState.IsValid)
             {
+                if (reviewModel.ImageFile != null)
+                {
+                    await UploadFile(reviewModel);
+                }
                 _context.Add(reviewModel);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index","Home");
@@ -105,7 +112,7 @@ namespace Recomendations_app.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Title,ReviewCategory,AuthorGrade,ReviewBody,DateOfCreationInUTC,SubjectId,ReviewImageId,ImageLink,AuthorName")] ReviewModel reviewModel)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,Title,ReviewCategory,AuthorGrade,ReviewBody,DateOfCreationInUTC,SubjectId,ImageStorageName,ImageLink,ImageFile,AuthorName")] ReviewModel reviewModel)
         {
             if (id != reviewModel.Id)
             {
@@ -116,6 +123,15 @@ namespace Recomendations_app.Controllers
             {
                 try
                 {
+                    if (reviewModel.ImageFile != null)
+                    {
+                        if (reviewModel.ImageStorageName != null)
+                        {
+                            await _cloudStorage.DeleteFileAsync(reviewModel.ImageStorageName);
+                        }
+
+                        await UploadFile(reviewModel);
+                    }
                     _context.Update(reviewModel);
                     await _context.SaveChangesAsync();
                 }
@@ -169,6 +185,10 @@ namespace Recomendations_app.Controllers
             var reviewModel = await _context.Reviews.FindAsync(id);
             if (reviewModel != null)
             {
+                if (reviewModel.ImageStorageName != null)
+                {
+                    await _cloudStorage.DeleteFileAsync(reviewModel.ImageStorageName);
+                }
                 _context.Reviews.Remove(reviewModel);
             }
             
@@ -179,6 +199,20 @@ namespace Recomendations_app.Controllers
         private bool ReviewModelExists(string id)
         {
           return (_context.Reviews?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private async Task UploadFile(ReviewModel reviewModel)
+        {
+            string fileNameForStorage = FormFileName(reviewModel.Title, reviewModel.ImageFile.FileName);
+            reviewModel.ImageLink = await _cloudStorage.UploadFileAsync(reviewModel.ImageFile, fileNameForStorage);
+            reviewModel.ImageStorageName = fileNameForStorage;
+        }
+
+        private static string FormFileName(string title, string fileName)
+        {
+            var fileExtension = Path.GetExtension(fileName);
+            var fileNameForStorage = $"{title}-{DateTime.Now.ToString("yyyyMMddHHmmss")}{fileExtension}";
+            return fileNameForStorage;
         }
     }
 }

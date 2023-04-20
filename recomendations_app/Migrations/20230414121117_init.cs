@@ -223,7 +223,7 @@ namespace Recomendations_app.Migrations
                     AuthorGrade = table.Column<int>(type: "integer", nullable: false),
                     ReviewBody = table.Column<string>(type: "character varying(5000)", maxLength: 5000, nullable: false),
                     DateOfCreationInUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ReviewImageId = table.Column<long>(type: "bigint", nullable: false),
+                    ImageStorageName = table.Column<long>(type: "bigint", nullable: false),
                     ImageLink = table.Column<string>(type: "text", nullable: true),
                     AuthorName = table.Column<string>(type: "text", nullable: false),
                     SubjectModelId = table.Column<long>(type: "bigint", nullable: true)

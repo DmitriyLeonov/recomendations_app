@@ -372,7 +372,7 @@ namespace Recomendations_app.Migrations
                     b.Property<int>("ReviewCategory")
                         .HasColumnType("integer");
 
-                    b.Property<long?>("ReviewImageId")
+                    b.Property<long?>("ImageStorageName")
                         .IsRequired()
                         .HasColumnType("bigint");
 
