@@ -25,6 +25,9 @@ namespace Recomendations_app.Data
             builder.Entity<IdentityRole>().HasData(adminRole, userRole);
 
             builder.Entity<ReviewModel>()
+                .HasMany(c => c.Tags);
+
+            builder.Entity<ReviewModel>()
                 .HasGeneratedTsVectorColumn(
                     p => p.SearchVector,
                     "english",
@@ -33,10 +36,10 @@ namespace Recomendations_app.Data
                 .HasMethod("GIN");
         }
 
-        public DbSet<ReviewModel>? Reviews { get; set; }
+        public DbSet<ReviewModel>? Reviews { get; set; } = null!;
         public DbSet<Comment>? Comments { get; set; }
         public DbSet<GradeModel>? Grades { get; set; }
-        public DbSet<TagModel>? Tags { get; set; }
+        public DbSet<TagModel>? Tags { get; set; } = null!;
         public DbSet<LikeModel>? Likes { get; set; }
         public DbSet<SubjectModel>? Subjects { get; set; }
     }

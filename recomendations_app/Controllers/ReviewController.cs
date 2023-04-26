@@ -70,8 +70,14 @@ namespace Recomendations_app.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,ReviewCategory,AuthorGrade,ReviewBody,DateOfCreationInUTC,ImageStorageName,ImageLink,AuthorName,ImageFile")] ReviewModel reviewModel)
+        public async Task<IActionResult> Create([Bind("Id,Title,ReviewCategory,AuthorGrade,ReviewBody,DateOfCreationInUTC,ImageStorageName,ImageLink,AuthorName,ImageFile")] ReviewModel reviewModel, string tags)
         {
+            List<TagModel> tagList = new List<TagModel>();
+            foreach (var tag in tags.Split(","))
+            {
+                tagList.Add(new TagModel(tag.ToString()));
+            }
+            _context.Tags.AddRange(tagList);
             reviewModel.Id = Guid.NewGuid().ToString();
             reviewModel.AuthorName = this.User.Identity.Name;
             reviewModel.DateOfCreationInUTC = DateTime.UtcNow;
@@ -81,7 +87,8 @@ namespace Recomendations_app.Controllers
                 {
                     await UploadFile(reviewModel);
                 }
-                _context.Add(reviewModel);
+                _context.Reviews.Add(reviewModel);
+                reviewModel.Tags.AddRange(tagList);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index","Home");
             }

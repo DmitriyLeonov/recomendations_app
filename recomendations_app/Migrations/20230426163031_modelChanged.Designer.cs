@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using NpgsqlTypes;
@@ -12,9 +13,11 @@ using Recomendations_app.Data;
 namespace Recomendations_app.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230426163031_modelChanged")]
+    partial class modelChanged
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,13 +54,13 @@ namespace Recomendations_app.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "e766218a-0b5e-4eee-aa23-44aa014049b2",
+                            Id = "0e5dd6d6-16b1-4192-a6e0-726dfbf1e84a",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "741aa845-118a-4ef0-a890-21a7a24b49e2",
+                            Id = "04129ced-6613-4d57-af43-4c11a270745e",
                             Name = "User",
                             NormalizedName = "USER"
                         });

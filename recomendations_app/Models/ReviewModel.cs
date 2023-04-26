@@ -40,8 +40,9 @@ namespace Recomendations_app.Models
         //public UserModel? Author { get; set; }
         [NotMapped]
         public int? CommentsAmount { get; set; }
+
         [MaxLength(15, ErrorMessage = "Max amount of tags is exceeded")]
-        public List<TagModel>? Tags { get; set; }
+        public List<TagModel>? Tags { get; set; } = new();
         public List<LikeModel> Likes { get; set; } = new();
 
         public NpgsqlTsVector SearchVector { get; set; }

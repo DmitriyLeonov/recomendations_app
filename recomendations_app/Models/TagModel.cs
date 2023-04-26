@@ -10,9 +10,10 @@ namespace Recomendations_app.Models
         public long Id { get; set; }
         [Required]
         [MaxLength(40, ErrorMessage = "Tag is too long")]
-        [MinLength(3, ErrorMessage = "Tag is too short")]
+        [MinLength(1, ErrorMessage = "Tag is too short")]
         public string Name { get; set; } = string.Empty;
-        public List<ReviewModel>? Reviews { get; set; }
+
+        public List<ReviewModel>? Reviews { get; set; } = new();
 
         public TagModel(string name)
         {
