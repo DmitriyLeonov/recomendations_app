@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using NpgsqlTypes;
@@ -12,9 +13,11 @@ using Recomendations_app.Data;
 namespace Recomendations_app.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230508151642_tagModelChanged")]
+    partial class tagModelChanged
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,13 +54,13 @@ namespace Recomendations_app.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "4a3a19fa-90cd-4eb9-b260-9a49a6602b29",
+                            Id = "5bcb3cbe-9ce5-434f-a992-6ee38bb2ab50",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "c65d4d53-5226-4907-894e-dc32c1d36701",
+                            Id = "1212c767-aae7-4389-abb3-8337acd574e8",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -428,6 +431,9 @@ namespace Recomendations_app.Migrations
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("character varying(40)");
+
+                    b.Property<int>("TimesUsed")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 

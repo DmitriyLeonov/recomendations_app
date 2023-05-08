@@ -35,7 +35,9 @@
             @*<th>
                 @Html.DisplayNameFor(model => model.Subject)
             </th>*@
-           
+            <th>
+                Tags
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.ImageLink)
             </th>
@@ -64,9 +66,12 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.DateOfCreationInUTC)
                 </td>
-                @*<td>
-                    @Html.DisplayFor(modelItem => item.Subject.Name)
-                </td>*@
+                <td>
+                    @foreach (var tag in item.Tags)
+                    {
+                        <b>@tag.Name</b>
+                    }
+                </td>
                 @if (item.ImageLink != null)
                 {
                     <td>

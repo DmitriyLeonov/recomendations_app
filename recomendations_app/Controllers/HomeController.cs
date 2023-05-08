@@ -19,7 +19,7 @@ namespace Recomendations_app.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Reviews/*.Include(r => r.Author)*//*.Include(r => r.Subject)*/;
+            var applicationDbContext = _context.Reviews.Include(r => r.Tags)/*.Include(r => r.Subject)*/;
             return View(await applicationDbContext.ToListAsync());
         }
 

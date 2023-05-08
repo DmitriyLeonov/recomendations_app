@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -72,12 +73,7 @@ namespace Recomendations_app.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,ReviewCategory,AuthorGrade,ReviewBody,DateOfCreationInUTC,ImageStorageName,ImageLink,AuthorName,ImageFile")] ReviewModel reviewModel, string tags)
         {
-            List<TagModel> tagList = new List<TagModel>();
-            foreach (var tag in tags.Split(","))
-            {
-                tagList.Add(new TagModel(tag.ToString()));
-            }
-            _context.Tags.AddRange(tagList);
+            var tagList = await AddTagToDb(tags);
             reviewModel.Id = Guid.NewGuid().ToString();
             reviewModel.AuthorName = this.User.Identity.Name;
             reviewModel.DateOfCreationInUTC = DateTime.UtcNow;
@@ -139,7 +135,7 @@ namespace Recomendations_app.Controllers
 
                         await UploadFile(reviewModel);
                     }
-                    _context.Update(reviewModel);
+                    _context.Reviews.Update(reviewModel);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -220,6 +216,18 @@ namespace Recomendations_app.Controllers
             var fileExtension = Path.GetExtension(fileName);
             var fileNameForStorage = $"{title}-{DateTime.Now.ToString("yyyyMMddHHmmss")}{fileExtension}";
             return fileNameForStorage;
+        }
+
+        private async Task<List<TagModel>> AddTagToDb(string tags)
+        {
+            List<TagModel> tagList = new List<TagModel>();
+            bool isTagExists = false;
+            foreach (var tag in tags.Split(","))
+            {
+                tagList.Add(new TagModel(tag.ToString()));
+            }
+            _context.Tags.AddRange(tagList);
+            return tagList;
         }
     }
 }
