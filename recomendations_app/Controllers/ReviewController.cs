@@ -34,7 +34,7 @@ namespace Recomendations_app.Controllers
                 query = query.Replace(" ", " <-> ");
                 result = _context.Reviews.Where(x =>
                     x.SearchVector.Matches(EF.Functions.ToTsQuery($"{query}:*"))
-                ).ToList();
+                ).Include(r => r.Tags).ToList();
             }
             return View(result);
         }
@@ -55,7 +55,6 @@ namespace Recomendations_app.Controllers
             {
                 return NotFound();
             }
-
             return View(reviewModel);
         }
 
@@ -100,7 +99,8 @@ namespace Recomendations_app.Controllers
                 return NotFound();
             }
 
-            var reviewModel = await _context.Reviews.FindAsync(id);
+            var reviews = await _context.Reviews.Include(r => r.Tags).ToListAsync();
+            var reviewModel = reviews.Where(r => r.Id == id).FirstOrDefault();
             if (reviewModel == null)
             {
                 return NotFound();
@@ -115,7 +115,7 @@ namespace Recomendations_app.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Title,ReviewCategory,AuthorGrade,ReviewBody,DateOfCreationInUTC,SubjectId,ImageStorageName,ImageLink,ImageFile,AuthorName")] ReviewModel reviewModel)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,Title,ReviewCategory,AuthorGrade,ReviewBody,DateOfCreationInUTC,SubjectId,ImageStorageName,ImageLink,ImageFile,AuthorName")] ReviewModel reviewModel, string tags)
         {
             if (id != reviewModel.Id)
             {
@@ -185,13 +185,16 @@ namespace Recomendations_app.Controllers
             {
                 return Problem("Entity set 'ApplicationDbContext.Reviews'  is null.");
             }
-            var reviewModel = await _context.Reviews.FindAsync(id);
+            var reviews = await _context.Reviews.Include(r => r.Tags).ToListAsync();
+            var reviewModel = reviews.Where(r => r.Id == id).FirstOrDefault();
             if (reviewModel != null)
             {
                 if (reviewModel.ImageStorageName != null)
                 {
                     await _cloudStorage.DeleteFileAsync(reviewModel.ImageStorageName);
                 }
+
+                _context.Tags.RemoveRange(reviewModel.Tags);
                 _context.Reviews.Remove(reviewModel);
             }
             

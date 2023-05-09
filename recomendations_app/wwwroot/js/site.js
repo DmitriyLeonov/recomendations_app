@@ -204,4 +204,3 @@ var tagInput1 = new TagsInput({
     duplicate: false,
     max: 10
 });
-tagInput1.addData([])

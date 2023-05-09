@@ -19,8 +19,8 @@ namespace Recomendations_app.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Reviews.Include(r => r.Tags)/*.Include(r => r.Subject)*/;
-            return View(await applicationDbContext.ToListAsync());
+            var reviews = _context.Reviews.Include(r => r.Tags)/*.Include(r => r.Subject)*/;
+            return View(await reviews.ToListAsync());
         }
 
         public IActionResult Privacy()
