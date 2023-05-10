@@ -55,7 +55,6 @@ body {
 }
 
 .form-control:focus {
-    color: #495057;
     border-color: #35b69f;
     outline: 0;
     box-shadow: none;
