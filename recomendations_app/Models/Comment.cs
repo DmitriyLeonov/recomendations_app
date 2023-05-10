@@ -8,14 +8,13 @@ namespace Recomendations_app.Models
     {
         public long Id { get; set; }
         [Required]
-        [MinLength(6, ErrorMessage = "Comment too short")]
+        [MinLength(2, ErrorMessage = "Comment too short")]
         [MaxLength(255, ErrorMessage = "Comment too long")]
         public string CommentBody { get; set; } = string.Empty;
         [Required]
         public DateTime DateOfCreationInUTC { get; set; }
         [Required]
         public string AuthorName { get; set; } = string.Empty;
-        public UserModel Author { get; set; }
         public string ReviewId { get; set; }
         public ReviewModel Review { get; set; }}
 }

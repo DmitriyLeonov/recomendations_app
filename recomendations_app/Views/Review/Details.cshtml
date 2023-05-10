@@ -8,7 +8,6 @@
 <h1>Details</h1>
 
 <div>
-    <h4>ReviewModel</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -67,6 +66,43 @@
         </dd>
     </dl>
 </div>
+<form asp-action="AddComment">
+    <div class="container mt-5 mb-5">
+        <div class="row height d-flex justify-content-center align-items-center">
+            <div class="col-md-7">
+                <div class="card">
+                    <div class="p-3">
+                        <h6>Comments</h6>
+                    </div>
+                    <div class="mt-2">
+                        @foreach (var comment in Model.Comments)
+                        {
+                            <div class="d-flex flex-row p-3">
+                                <div class="d-flex flex-row p-3">
+                                    <div class="w-100">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="d-flex flex-row align-items-center">
+                                                <span class="mr-2">@comment.AuthorName</span>
+                                            </div>
+                                            <small>@comment.DateOfCreationInUTC</small>
+                                        </div>
+                                        <p class="text-justify comment-text mb-0">@comment.CommentBody</p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <textarea name="commentText" class="form-control" required maxlength="255"></textarea>
+        <span asp-validation-for="Title" class="text-danger"></span>
+        <input name="id" type="hidden" value="@Model.Id"/>
+        <div class="form-group">
+            <input type="submit" value="Post comment" class="btn btn-primary"/>
+        </div>
+    </div>
+</form>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-controller="Home" asp-action="Index">Back to List</a>

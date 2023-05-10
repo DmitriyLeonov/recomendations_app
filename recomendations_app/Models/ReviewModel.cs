@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
 using NpgsqlTypes;
 using Recomendations_app.CustomValidationAttributes;
@@ -11,9 +12,9 @@ namespace Recomendations_app.Models
     public class ReviewModel
     {
         public string Id { get; set; }
-        [Required(ErrorMessage = "Title is required")]
-        [MaxLength(255, ErrorMessage = "Maximum tile length is 255")]
-        [MinLength(2, ErrorMessage = "Minimum title length is 2")]
+        [Required(ErrorMessage = "This field is required")]
+        [MaxLength(255, ErrorMessage = "Maximum field length is 255")]
+        [MinLength(2, ErrorMessage = "Minimum field length is 2")]
         public string Title { get; set; } = string.Empty;
         [Required]
         public Category ReviewCategory { get; set; }
@@ -38,8 +39,7 @@ namespace Recomendations_app.Models
         [Required]
         public string AuthorName { get; set; } = string.Empty;
         //public UserModel? Author { get; set; }
-        [NotMapped]
-        public int? CommentsAmount { get; set; }
+        public List<Comment> Comments { get; set; } = new();
 
         [MaxLength(15, ErrorMessage = "Max amount of tags is exceeded")]
         public List<TagModel>? Tags { get; set; } = new();

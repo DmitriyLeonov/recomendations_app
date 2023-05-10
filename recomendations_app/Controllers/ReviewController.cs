@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -48,8 +49,8 @@ namespace Recomendations_app.Controllers
             }
 
             var reviewModel = await _context.Reviews
-                //.Include(r => r.Author)
-                //.Include(r => r.Subject)
+                .Include(r => r.Comments)
+                .Include(r => r.Tags)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (reviewModel == null)
             {
@@ -200,6 +201,24 @@ namespace Recomendations_app.Controllers
             
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<IActionResult> AddComment(string commentText,string id)
+        {
+            if (commentText != null)
+            {
+                var comment = new Comment()
+                {
+                    AuthorName = this.User.Identity.Name,
+                    CommentBody = commentText,
+                    DateOfCreationInUTC = DateTime.UtcNow,
+                    Review = await _context.Reviews.FirstOrDefaultAsync(m => m.Id == id),
+                    ReviewId = id
+                };
+                await _context.Comments.AddAsync(comment);
+                await _context.SaveChangesAsync();
+            }
+            return Redirect("/Review/Details/" + id);
         }
 
         private bool ReviewModelExists(string id)
