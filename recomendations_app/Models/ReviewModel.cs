@@ -27,15 +27,11 @@ namespace Recomendations_app.Models
         public string ReviewBody { get; set; } = string.Empty;
         [Required]
         public DateTime DateOfCreationInUTC { get; set; }
+
         [Required]
         //public long SubjectId { get; set; }
         //public SubjectModel Subject { get; set; } = new();
-        [MaxFileSize(1 * 3840 * 3840)]
-        [PermittedExtensions(new string[] { ".jpg", ".png", ".gif", ".jpeg" })]
-        [NotMapped]
-        public virtual IFormFile ImageFile { get; set; }
-        public string? ImageLink { get; set; }
-        public string? ImageStorageName { get; set; }
+        public List<ImageModel> Images { get; set; } = new();
         [Required]
         public string AuthorName { get; set; } = string.Empty;
         //public UserModel? Author { get; set; }

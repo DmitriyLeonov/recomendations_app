@@ -43,5 +43,6 @@ namespace Recomendations_app.Data
         public DbSet<TagModel>? Tags { get; set; } = null!;
         public DbSet<LikeModel>? Likes { get; set; }
         public DbSet<SubjectModel>? Subjects { get; set; }
+        public DbSet<ImageModel>? Images { get; set; }
     }
 }

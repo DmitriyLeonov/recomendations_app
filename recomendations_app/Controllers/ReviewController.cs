@@ -52,6 +52,7 @@ namespace Recomendations_app.Controllers
                 .Include(r => r.Comments)
                 .Include(r => r.Tags)
                 .Include(r => r.Likes)
+                .Include(r => r.Images)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (reviewModel == null)
             {
@@ -63,7 +64,6 @@ namespace Recomendations_app.Controllers
         // GET: Review/Create
         public IActionResult Create()
         {
-            ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name");
             return View();
         }
 
@@ -72,7 +72,7 @@ namespace Recomendations_app.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,ReviewCategory,AuthorGrade,ReviewBody,DateOfCreationInUTC,ImageStorageName,ImageLink,AuthorName,ImageFile")] ReviewModel reviewModel, string tags)
+        public async Task<IActionResult> Create([Bind("Id,Title,ReviewCategory,AuthorGrade,ReviewBody,DateOfCreationInUTC,AuthorName,Images")] ReviewModel reviewModel, string tags, IFormFile[] images)
         {
             var tagList = await AddTagToDb(tags);
             reviewModel.Id = Guid.NewGuid().ToString();
@@ -80,9 +80,9 @@ namespace Recomendations_app.Controllers
             reviewModel.DateOfCreationInUTC = DateTime.UtcNow;
             if (!ModelState.IsValid)
             {
-                if (reviewModel.ImageFile != null)
+                if (images.Length >= 1)
                 {
-                    await UploadFile(reviewModel);
+                    await UploadFile(images, reviewModel);
                 }
                 _context.Reviews.Add(reviewModel);
                 reviewModel.Tags.AddRange(tagList);
@@ -128,15 +128,6 @@ namespace Recomendations_app.Controllers
             {
                 try
                 {
-                    if (reviewModel.ImageFile != null)
-                    {
-                        if (reviewModel.ImageStorageName != null)
-                        {
-                            await _cloudStorage.DeleteFileAsync(reviewModel.ImageStorageName);
-                        }
-
-                        await UploadFile(reviewModel);
-                    }
                     _context.Reviews.Update(reviewModel);
                     await _context.SaveChangesAsync();
                 }
@@ -187,16 +178,26 @@ namespace Recomendations_app.Controllers
             {
                 return Problem("Entity set 'ApplicationDbContext.Reviews'  is null.");
             }
-            var reviews = await _context.Reviews.Include(r => r.Tags).ToListAsync();
+            var reviews = await _context.Reviews
+                .Include(r => r.Comments)
+                .Include(r => r.Tags)
+                .Include(r => r.Likes)
+                .Include(r => r.Images).
+                ToListAsync();
             var reviewModel = reviews.Where(r => r.Id == id).FirstOrDefault();
             if (reviewModel != null)
             {
-                if (reviewModel.ImageStorageName != null)
+                if (reviewModel.Images != null)
                 {
-                    await _cloudStorage.DeleteFileAsync(reviewModel.ImageStorageName);
+                    foreach (var image in reviewModel.Images)
+                    {
+                        await _cloudStorage.DeleteFileAsync(image.ImageStorageName);
+                    }
                 }
-
                 _context.Tags.RemoveRange(reviewModel.Tags);
+                _context.Likes.RemoveRange(reviewModel.Likes);
+                _context.Comments.RemoveRange(reviewModel.Comments);
+                _context.Images.RemoveRange(reviewModel.Images);
                 _context.Reviews.Remove(reviewModel);
             }
             
@@ -223,10 +224,9 @@ namespace Recomendations_app.Controllers
         }
         public async Task<IActionResult> AddLike(string id)
         {
-            var users = await _context.Users.ToListAsync();
-            var user = users.Find(x => x.UserName == this.User.Identity.Name);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == this.User.Identity.Name);
             var rewiew = await _context.Reviews.FirstOrDefaultAsync(m => m.Id == id);
-            var toUser = users.Find(x => x.UserName == rewiew.AuthorName);
+            var toUser = await _context.Users.FirstOrDefaultAsync(x => x.UserName == rewiew.AuthorName);
             var like = new LikeModel()
             {
                 FromUser = user,
@@ -248,11 +248,21 @@ namespace Recomendations_app.Controllers
           return (_context.Reviews?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
-        private async Task UploadFile(ReviewModel reviewModel)
+        private async Task UploadFile(IFormFile[] images,ReviewModel reviewModel)
         {
-            string fileNameForStorage = FormFileName(reviewModel.Title, reviewModel.ImageFile.FileName);
-            reviewModel.ImageLink = await _cloudStorage.UploadFileAsync(reviewModel.ImageFile, fileNameForStorage);
-            reviewModel.ImageStorageName = fileNameForStorage;
+           foreach (var image in images)
+           {
+               string fileNameForStorage = FormFileName(reviewModel.Title, image.FileName);
+                ImageModel imageModel = new ImageModel()
+               {
+                   ImageFile = image,
+                   ImageLink = await _cloudStorage.UploadFileAsync(image, fileNameForStorage),
+                   ImageStorageName = fileNameForStorage,
+                   Review = reviewModel,
+                   ReviewId = reviewModel.Id
+               };
+                await _context.Images.AddAsync(imageModel);
+           }
         }
 
         private static string FormFileName(string title, string fileName)

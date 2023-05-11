@@ -14,80 +14,82 @@
 <p>
     <a asp-controller="Review" asp-action="Create">Create New</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReviewCategory)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AuthorGrade)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReviewBody)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DateOfCreationInUTC)
-            </th>
-            @*<th>
-                @Html.DisplayNameFor(model => model.Subject)
-            </th>*@
-            <th>
-                Tags
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImageLink)
-            </th>
-            @*<th>
-                @Html.DisplayNameFor(model => model.Author)
-            </th>*@
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+<div id="block">
+    <table class="table">
+        <thead>
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ReviewCategory)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.AuthorGrade)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ReviewBody)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DateOfCreationInUTC)
-                </td>
-                <td>
-                    @foreach (var tag in item.Tags)
-                    {
-                        <b>@tag.Name</b>
-                    }
-                </td>
-                @if (item.ImageLink != null)
-                {
-                    <td>
-                        <img src="@Url.Content(item.ImageLink)" alt="Image" style="width: 150px; height: 220px;"/>
-                    </td>
-                }
-                @*
-                @*<td>
-                    @Html.DisplayFor(modelItem => item.Author.Id)
-                </td>*@
-                <td>
-                    <a asp-controller="Review" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-controller="Review" asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-controller="Review" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
+                <th>
+                    @Html.DisplayNameFor(model => model.Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ReviewCategory)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AuthorGrade)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ReviewBody)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DateOfCreationInUTC)
+                </th>
+                @*<th>
+                @Html.DisplayNameFor(model => model.Subject)
+                </th>*@
+                <th>
+                    Tags
+                </th>
+                @*<th>
+                    @Html.DisplayNameFor(model => model.ImageLink)
+                </th>*@
+                @*<th>
+                @Html.DisplayNameFor(model => model.Author)
+                </th>*@
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReviewCategory)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AuthorGrade)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReviewBody)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateOfCreationInUTC)
+                    </td>
+                    <td>
+                        @foreach (var tag in item.Tags)
+                        {
+                            <b>@tag.Name</b>
+                        }
+                    </td>
+                   @* @if (item.ImageLink != null)
+                    {
+                        <td>
+                            <img src="@Url.Content(item.ImageLink)" alt="Image" style="width: 150px; height: 220px;" />
+                        </td>
+                    }
+                    @**@
+                @*<td>
+                @Html.DisplayFor(modelItem => item.Author.Id)
+                </td>*@
+                    <td>
+                        <a asp-controller="Review" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-controller="Review" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-controller="Review" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

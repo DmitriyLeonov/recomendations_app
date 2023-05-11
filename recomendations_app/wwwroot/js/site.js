@@ -204,3 +204,31 @@ var tagInput1 = new TagsInput({
     duplicate: false,
     max: 10
 });
+
+async function elementUpdate(selector) {
+    try {
+        var html = await (await fetch(location.href)).text();
+        var newdoc = new DOMParser().parseFromString(html, 'text/html');
+        document.querySelector(selector).outerHTML = newdoc.querySelector(selector).outerHTML;
+        console.log('Элемент ' + selector + ' был успешно обновлен');
+        return true;
+    } catch (err) {
+        console.log('При обновлении элемента ' + selector + ' произошла ошибка:');
+        console.dir(err);
+        return false;
+    }
+}
+
+(async function () {
+
+    while (true) {
+
+        await elementUpdate('div#block');
+        await elementUpdate('div#like');
+        await elementUpdate('div#comments');
+
+        await new Promise(function (success) { setTimeout(success, 500); });
+
+    }
+
+})();

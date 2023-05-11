@@ -34,15 +34,11 @@
                 <th>
                     @Html.DisplayNameFor(model => model.DateOfCreationInUTC)
                 </th>
-                @* <th>
-            @Html.DisplayNameFor(model => model.Subject)
-            </th>*@
-                <th>
-                    @Html.DisplayNameFor(model => model.ImageLink)
-                </th>
+                
                 @*<th>
-            @Html.DisplayNameFor(model => model.Author)
-            </th>*@
+                    @Html.DisplayNameFor(model => model.ImageLink)
+                </th>*@
+               
                 <th></th>
             </tr>
         </thead>
@@ -65,18 +61,14 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.DateOfCreationInUTC)
                     </td>
-                    @*<td>
-            @Html.DisplayFor(modelItem => item.Subject.Name)
-            </td>*@
-                    @if (item.ImageLink != null)
+                
+                    @*@if (item.ImageLink != null)
                     {
                         <td>
                             <img src="@Url.Content(item.ImageLink)" alt="Image" style="width: 150px; height: 220px;"/>
                         </td>
-                    }
-                    @*<td>
-            @Html.DisplayFor(modelItem => item.Author.Id)
-            </td>*@
+                    }*@
+                  
                     <td>
                         <a asp-controller="Review" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                         <a asp-controller="Review" asp-action="Details" asp-route-id="@item.Id">Details</a> |
