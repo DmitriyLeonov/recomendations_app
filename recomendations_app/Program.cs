@@ -34,7 +34,7 @@ namespace Recomendations_app
                 options.ClientId = "51607883";
                 options.ClientSecret = "0hhoApJajyA7hn4FDEKr";
             });
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+            builder.Services.AddDefaultIdentity<UserModel>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddSingleton<ICloudStorage, GoogleCloudStorage>();

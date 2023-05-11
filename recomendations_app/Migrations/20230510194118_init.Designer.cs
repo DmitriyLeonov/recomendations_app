@@ -13,8 +13,8 @@ using Recomendations_app.Data;
 namespace Recomendations_app.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230426165334_changes")]
-    partial class changes
+    [Migration("20230510194118_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,13 +54,13 @@ namespace Recomendations_app.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "8412080c-34e8-4b6c-97e2-51bf274d2d1a",
+                            Id = "edc8aacb-f45b-4779-8989-07bc32b081fa",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "eba62f0e-7d31-4342-9c77-71f271da7b45",
+                            Id = "338beb3f-ef84-4e88-b75f-b4221cec4033",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -250,15 +250,11 @@ namespace Recomendations_app.Migrations
 
             modelBuilder.Entity("Recomendations_app.Models.Comment", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("AuthorId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AuthorName")
                         .IsRequired()
@@ -277,8 +273,6 @@ namespace Recomendations_app.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
 
                     b.HasIndex("ReviewId");
 
@@ -512,19 +506,11 @@ namespace Recomendations_app.Migrations
 
             modelBuilder.Entity("Recomendations_app.Models.Comment", b =>
                 {
-                    b.HasOne("Recomendations_app.Models.UserModel", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Recomendations_app.Models.ReviewModel", "Review")
-                        .WithMany()
+                        .WithMany("Comments")
                         .HasForeignKey("ReviewId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Author");
 
                     b.Navigation("Review");
                 });
@@ -597,6 +583,8 @@ namespace Recomendations_app.Migrations
 
             modelBuilder.Entity("Recomendations_app.Models.ReviewModel", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("Likes");
                 });
 

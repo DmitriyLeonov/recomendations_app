@@ -7,7 +7,7 @@
 namespace Recomendations_app.Migrations
 {
     /// <inheritdoc />
-    public partial class changes : Migration
+    public partial class likescounter : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,20 +15,26 @@ namespace Recomendations_app.Migrations
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "04129ced-6613-4d57-af43-4c11a270745e");
+                keyValue: "338beb3f-ef84-4e88-b75f-b4221cec4033");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "0e5dd6d6-16b1-4192-a6e0-726dfbf1e84a");
+                keyValue: "edc8aacb-f45b-4779-8989-07bc32b081fa");
+
+            migrationBuilder.AddColumn<int>(
+                name: "LikesCount",
+                table: "AspNetUsers",
+                type: "integer",
+                nullable: true);
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "8412080c-34e8-4b6c-97e2-51bf274d2d1a", null, "Administrator", "ADMINISTRATOR" },
-                    { "eba62f0e-7d31-4342-9c77-71f271da7b45", null, "User", "USER" }
+                    { "1a2f366e-df44-47be-816e-f7fadcb0980a", null, "Administrator", "ADMINISTRATOR" },
+                    { "702c709d-b6d0-4873-8729-8f60d0000f0e", null, "User", "USER" }
                 });
         }
 
@@ -38,20 +44,24 @@ namespace Recomendations_app.Migrations
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "8412080c-34e8-4b6c-97e2-51bf274d2d1a");
+                keyValue: "1a2f366e-df44-47be-816e-f7fadcb0980a");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "eba62f0e-7d31-4342-9c77-71f271da7b45");
+                keyValue: "702c709d-b6d0-4873-8729-8f60d0000f0e");
+
+            migrationBuilder.DropColumn(
+                name: "LikesCount",
+                table: "AspNetUsers");
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "04129ced-6613-4d57-af43-4c11a270745e", null, "User", "USER" },
-                    { "0e5dd6d6-16b1-4192-a6e0-726dfbf1e84a", null, "Administrator", "ADMINISTRATOR" }
+                    { "338beb3f-ef84-4e88-b75f-b4221cec4033", null, "User", "USER" },
+                    { "edc8aacb-f45b-4779-8989-07bc32b081fa", null, "Administrator", "ADMINISTRATOR" }
                 });
         }
     }

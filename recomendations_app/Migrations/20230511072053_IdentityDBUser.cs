@@ -7,40 +7,42 @@
 namespace Recomendations_app.Migrations
 {
     /// <inheritdoc />
-    public partial class modelchange : Migration
+    public partial class IdentityDBUser : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Comments_AspNetUsers_AuthorId",
-                table: "Comments");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Comments_AuthorId",
-                table: "Comments");
+            migrationBuilder.DeleteData(
+                table: "AspNetRoles",
+                keyColumn: "Id",
+                keyValue: "1a2f366e-df44-47be-816e-f7fadcb0980a");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "4a3a19fa-90cd-4eb9-b260-9a49a6602b29");
-
-            migrationBuilder.DeleteData(
-                table: "AspNetRoles",
-                keyColumn: "Id",
-                keyValue: "c65d4d53-5226-4907-894e-dc32c1d36701");
+                keyValue: "702c709d-b6d0-4873-8729-8f60d0000f0e");
 
             migrationBuilder.DropColumn(
-                name: "AuthorId",
-                table: "Comments");
+                name: "Discriminator",
+                table: "AspNetUsers");
+
+            migrationBuilder.AlterColumn<int>(
+                name: "LikesCount",
+                table: "AspNetUsers",
+                type: "integer",
+                nullable: false,
+                defaultValue: 0,
+                oldClrType: typeof(int),
+                oldType: "integer",
+                oldNullable: true);
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "91e31bed-ba42-4906-9478-19f6972d05e8", null, "User", "USER" },
-                    { "a910f134-6cd9-45a5-9813-359fdd6da1bf", null, "Administrator", "ADMINISTRATOR" }
+                    { "404b7c93-c7d8-4d43-a951-77aa2d586a11", null, "User", "USER" },
+                    { "4b20c0f2-4aff-4ecc-b503-2fb50bd87b7d", null, "Administrator", "ADMINISTRATOR" }
                 });
         }
 
@@ -50,16 +52,24 @@ namespace Recomendations_app.Migrations
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "91e31bed-ba42-4906-9478-19f6972d05e8");
+                keyValue: "404b7c93-c7d8-4d43-a951-77aa2d586a11");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "a910f134-6cd9-45a5-9813-359fdd6da1bf");
+                keyValue: "4b20c0f2-4aff-4ecc-b503-2fb50bd87b7d");
+
+            migrationBuilder.AlterColumn<int>(
+                name: "LikesCount",
+                table: "AspNetUsers",
+                type: "integer",
+                nullable: true,
+                oldClrType: typeof(int),
+                oldType: "integer");
 
             migrationBuilder.AddColumn<string>(
-                name: "AuthorId",
-                table: "Comments",
+                name: "Discriminator",
+                table: "AspNetUsers",
                 type: "text",
                 nullable: false,
                 defaultValue: "");
@@ -69,22 +79,9 @@ namespace Recomendations_app.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "4a3a19fa-90cd-4eb9-b260-9a49a6602b29", null, "Administrator", "ADMINISTRATOR" },
-                    { "c65d4d53-5226-4907-894e-dc32c1d36701", null, "User", "USER" }
+                    { "1a2f366e-df44-47be-816e-f7fadcb0980a", null, "Administrator", "ADMINISTRATOR" },
+                    { "702c709d-b6d0-4873-8729-8f60d0000f0e", null, "User", "USER" }
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Comments_AuthorId",
-                table: "Comments",
-                column: "AuthorId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Comments_AspNetUsers_AuthorId",
-                table: "Comments",
-                column: "AuthorId",
-                principalTable: "AspNetUsers",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
         }
     }
 }

@@ -6,7 +6,7 @@ using Recomendations_app.Models;
 
 namespace Recomendations_app.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<UserModel>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -36,6 +36,7 @@ namespace Recomendations_app.Data
                 .HasMethod("GIN");
         }
 
+        public new DbSet<UserModel>? Users { get; set; }
         public DbSet<ReviewModel>? Reviews { get; set; } = null!;
         public DbSet<Comment>? Comments { get; set; }
         public DbSet<GradeModel>? Grades { get; set; }

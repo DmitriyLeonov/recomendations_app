@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using NpgsqlTypes;
 using Recomendations_app.Data;
 
 #nullable disable
@@ -12,8 +13,8 @@ using Recomendations_app.Data;
 namespace Recomendations_app.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230414121117_init")]
-    partial class init
+    [Migration("20230511061328_likescounter")]
+    partial class likescounter
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,13 +54,13 @@ namespace Recomendations_app.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "f8f3710f-4047-4a64-abb2-ac787dfe70e4",
+                            Id = "1a2f366e-df44-47be-816e-f7fadcb0980a",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "ad2195c7-ee02-4063-84c9-541dd8296ab1",
+                            Id = "702c709d-b6d0-4873-8729-8f60d0000f0e",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -249,15 +250,11 @@ namespace Recomendations_app.Migrations
 
             modelBuilder.Entity("Recomendations_app.Models.Comment", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("AuthorId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AuthorName")
                         .IsRequired()
@@ -276,8 +273,6 @@ namespace Recomendations_app.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
 
                     b.HasIndex("ReviewId");
 
@@ -363,6 +358,9 @@ namespace Recomendations_app.Migrations
                     b.Property<string>("ImageLink")
                         .HasColumnType("text");
 
+                    b.Property<string>("ImageStorageName")
+                        .HasColumnType("text");
+
                     b.Property<string>("ReviewBody")
                         .IsRequired()
                         .HasMaxLength(5000)
@@ -371,9 +369,12 @@ namespace Recomendations_app.Migrations
                     b.Property<int>("ReviewCategory")
                         .HasColumnType("integer");
 
-                    b.Property<long?>("ImageStorageName")
+                    b.Property<NpgsqlTsVector>("SearchVector")
                         .IsRequired()
-                        .HasColumnType("bigint");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("tsvector")
+                        .HasAnnotation("Npgsql:TsVectorConfig", "english")
+                        .HasAnnotation("Npgsql:TsVectorProperties", new[] { "ReviewBody", "Title" });
 
                     b.Property<long?>("SubjectModelId")
                         .HasColumnType("bigint");
@@ -384,6 +385,10 @@ namespace Recomendations_app.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SearchVector");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("SearchVector"), "GIN");
 
                     b.HasIndex("SubjectModelId");
 
@@ -445,6 +450,9 @@ namespace Recomendations_app.Migrations
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
+                    b.Property<int>("LikesCount")
+                        .HasColumnType("integer");
+
                     b.HasDiscriminator().HasValue("UserModel");
                 });
 
@@ -501,19 +509,11 @@ namespace Recomendations_app.Migrations
 
             modelBuilder.Entity("Recomendations_app.Models.Comment", b =>
                 {
-                    b.HasOne("Recomendations_app.Models.UserModel", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Recomendations_app.Models.ReviewModel", "Review")
-                        .WithMany()
+                        .WithMany("Comments")
                         .HasForeignKey("ReviewId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Author");
 
                     b.Navigation("Review");
                 });
@@ -586,6 +586,8 @@ namespace Recomendations_app.Migrations
 
             modelBuilder.Entity("Recomendations_app.Models.ReviewModel", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("Likes");
                 });
 

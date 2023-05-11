@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using NpgsqlTypes;
 
 #nullable disable
 
@@ -223,9 +224,12 @@ namespace Recomendations_app.Migrations
                     AuthorGrade = table.Column<int>(type: "integer", nullable: false),
                     ReviewBody = table.Column<string>(type: "character varying(5000)", maxLength: 5000, nullable: false),
                     DateOfCreationInUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ImageStorageName = table.Column<long>(type: "bigint", nullable: false),
                     ImageLink = table.Column<string>(type: "text", nullable: true),
+                    ImageStorageName = table.Column<string>(type: "text", nullable: true),
                     AuthorName = table.Column<string>(type: "text", nullable: false),
+                    SearchVector = table.Column<NpgsqlTsVector>(type: "tsvector", nullable: false)
+                        .Annotation("Npgsql:TsVectorConfig", "english")
+                        .Annotation("Npgsql:TsVectorProperties", new[] { "ReviewBody", "Title" }),
                     SubjectModelId = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
@@ -242,23 +246,16 @@ namespace Recomendations_app.Migrations
                 name: "Comments",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     CommentBody = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     DateOfCreationInUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     AuthorName = table.Column<string>(type: "text", nullable: false),
-                    AuthorId = table.Column<string>(type: "text", nullable: false),
                     ReviewId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Comments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Comments_AspNetUsers_AuthorId",
-                        column: x => x.AuthorId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Comments_Reviews_ReviewId",
                         column: x => x.ReviewId,
@@ -329,8 +326,8 @@ namespace Recomendations_app.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "ad2195c7-ee02-4063-84c9-541dd8296ab1", null, "User", "USER" },
-                    { "f8f3710f-4047-4a64-abb2-ac787dfe70e4", null, "Administrator", "ADMINISTRATOR" }
+                    { "338beb3f-ef84-4e88-b75f-b4221cec4033", null, "User", "USER" },
+                    { "edc8aacb-f45b-4779-8989-07bc32b081fa", null, "Administrator", "ADMINISTRATOR" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -371,11 +368,6 @@ namespace Recomendations_app.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comments_AuthorId",
-                table: "Comments",
-                column: "AuthorId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Comments_ReviewId",
                 table: "Comments",
                 column: "ReviewId");
@@ -409,6 +401,12 @@ namespace Recomendations_app.Migrations
                 name: "IX_ReviewModelTagModel_TagsId",
                 table: "ReviewModelTagModel",
                 column: "TagsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reviews_SearchVector",
+                table: "Reviews",
+                column: "SearchVector")
+                .Annotation("Npgsql:IndexMethod", "GIN");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reviews_SubjectModelId",

@@ -51,6 +51,7 @@ namespace Recomendations_app.Controllers
             var reviewModel = await _context.Reviews
                 .Include(r => r.Comments)
                 .Include(r => r.Tags)
+                .Include(r => r.Likes)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (reviewModel == null)
             {
@@ -116,7 +117,7 @@ namespace Recomendations_app.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Title,ReviewCategory,AuthorGrade,ReviewBody,DateOfCreationInUTC,SubjectId,ImageStorageName,ImageLink,ImageFile,AuthorName")] ReviewModel reviewModel, string tags)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,Title,ReviewCategory,AuthorGrade,ReviewBody,DateOfCreationInUTC,SubjectId,ImageStorageName,ImageLink,ImageFile,AuthorName")] ReviewModel reviewModel)
         {
             if (id != reviewModel.Id)
             {
@@ -220,6 +221,27 @@ namespace Recomendations_app.Controllers
             }
             return Redirect("/Review/Details/" + id);
         }
+        public async Task<IActionResult> AddLike(string id)
+        {
+            var users = await _context.Users.ToListAsync();
+            var user = users.Find(x => x.UserName == this.User.Identity.Name);
+            var rewiew = await _context.Reviews.FirstOrDefaultAsync(m => m.Id == id);
+            var toUser = users.Find(x => x.UserName == rewiew.AuthorName);
+            var like = new LikeModel()
+            {
+                FromUser = user,
+                FromUserId = user.Id,
+                Review = rewiew,
+                ReviewId = id,
+                ToUser = toUser,
+                ToUserId = toUser.Id
+
+            };
+            toUser.LikesCount++;
+            await _context.AddAsync(like);
+            await _context.SaveChangesAsync();
+            return Redirect("/Review/Details/" + id);
+        }
 
         private bool ReviewModelExists(string id)
         {
@@ -243,7 +265,6 @@ namespace Recomendations_app.Controllers
         private async Task<List<TagModel>> AddTagToDb(string tags)
         {
             List<TagModel> tagList = new List<TagModel>();
-            bool isTagExists = false;
             foreach (var tag in tags.Split(","))
             {
                 tagList.Add(new TagModel(tag.ToString()));

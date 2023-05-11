@@ -66,6 +66,15 @@
         </dd>
     </dl>
 </div>
+<form asp-action="AddLike">
+    <input name="id" type="hidden" value="@Model.Id" />
+    <div class="ui labeled button mt-5 ml-5" tabindex="0">
+        <button type="submit" class="btn btn-outline-secondary btn-floating">
+            <i class="fa-regular fa-thumbs-up"></i>
+        </button>
+        <span class="ui basic blue label">@Model.Likes.Count</span>
+    </div>
+</form>
 <form asp-action="AddComment">
     <div class="container mt-5 mb-5">
         <div class="row height d-flex justify-content-center align-items-center">
