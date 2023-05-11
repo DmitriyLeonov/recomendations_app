@@ -19,7 +19,11 @@ namespace Recomendations_app.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var reviews = _context.Reviews.Include(r => r.Tags)/*.Include(r => r.Subject)*/;
+            var reviews = _context.Reviews
+                .Include(r => r.Comments)
+                .Include(r => r.Tags)
+                .Include(r => r.Likes)
+                .Include(r => r.Images);
             return View(await reviews.ToListAsync());
         }
 

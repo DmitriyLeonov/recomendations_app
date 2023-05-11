@@ -34,8 +34,11 @@ namespace Recomendations_app.Controllers
                 query = query.Trim();
                 query = query.Replace(" ", " <-> ");
                 result = _context.Reviews.Where(x =>
-                    x.SearchVector.Matches(EF.Functions.ToTsQuery($"{query}:*"))
-                ).Include(r => r.Tags).ToList();
+                    x.SearchVector.Matches(EF.Functions.ToTsQuery($"{query}:*")))
+                    .Include(r => r.Comments)
+                    .Include(r => r.Tags)
+                    .Include(r => r.Likes)
+                    .Include(r => r.Images).ToList();
             }
             return View(result);
         }
@@ -107,8 +110,6 @@ namespace Recomendations_app.Controllers
             {
                 return NotFound();
             }
-            ViewData["AuthorName"] = new SelectList(_context.Set<UserModel>(), "Id", "Id", reviewModel.AuthorName);
-            //ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name", reviewModel.SubjectId);
             return View(reviewModel);
         }
 
@@ -144,8 +145,6 @@ namespace Recomendations_app.Controllers
                 }
                 return RedirectToAction("Index","Home");
             }
-            ViewData["AuthorName"] = new SelectList(_context.Set<UserModel>(), "Id", "Id", reviewModel.AuthorName);
-            //ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name", reviewModel.SubjectId);
             return View(reviewModel);
         }
 
@@ -178,13 +177,13 @@ namespace Recomendations_app.Controllers
             {
                 return Problem("Entity set 'ApplicationDbContext.Reviews'  is null.");
             }
-            var reviews = await _context.Reviews
+            var reviewModel = await _context.Reviews
                 .Include(r => r.Comments)
                 .Include(r => r.Tags)
                 .Include(r => r.Likes)
-                .Include(r => r.Images).
-                ToListAsync();
-            var reviewModel = reviews.Where(r => r.Id == id).FirstOrDefault();
+                .Include(r => r.Images).FirstOrDefaultAsync(x => x.Id == id);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == reviewModel.AuthorName);
+            user.LikesCount -= reviewModel.Likes.Count;
             if (reviewModel != null)
             {
                 if (reviewModel.Images != null)
@@ -200,7 +199,6 @@ namespace Recomendations_app.Controllers
                 _context.Images.RemoveRange(reviewModel.Images);
                 _context.Reviews.Remove(reviewModel);
             }
-            
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Home");
         }
