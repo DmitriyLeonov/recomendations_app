@@ -44,7 +44,7 @@
                     Tags
                 </th>
                 <th>
-                    Images
+                    Image
                 </th>
                 <th>
                 @Html.DisplayNameFor(model => model.Author.UserName)
@@ -83,16 +83,13 @@
                             <b>@tag.Name</b>
                         }
                     </td>
-                     @if (item.Images != null)
-                {
-                    @foreach (var image in item.Images)
+                    @if (item.Images[0].ImageLink != null)
                     {
                         <td>
-                            <img src="@Url.Content(image.ImageLink)" alt="Image" style="width: 150px; height: 220px;" />
+                            <img src="@Url.Content(item.Images[0].ImageLink)" alt="Image" style="width: 150px; height: 220px;" />
                         </td>
                     }
-                
-                }
+                     
                      <td>
                         @Html.DisplayFor(modelItem => item.Author.UserName)
                         <input name="id" type="hidden"/>

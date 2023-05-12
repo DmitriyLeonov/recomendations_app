@@ -30,6 +30,12 @@
                             <li class="nav-item">
                                 @Html.ActionLink("My reviews", "Index", "Users", new { name = @User.Identity?.Name }, new { @class = "nav-link" })
                             </li>
+                            if (@User.IsInRole("Administrator"))
+                            {
+                                <li class="nav-item">
+                                    @Html.ActionLink("Admin panel", "Index", "Admin",new{}, new { @class = "nav-link" })
+                                </li>
+                            }
                         }
                     </ul>
                     <button onclick="switchTheme()" class="btn rounded-fill"><i id="dl-icon" class="bi bi-moon-fill"></i></button>

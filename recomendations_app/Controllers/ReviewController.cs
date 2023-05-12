@@ -230,17 +230,17 @@ namespace Recomendations_app.Controllers
         public async Task<IActionResult> AddLike(string id)
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == this.User.Identity.Name);
-            var rewiew = await _context.Reviews.FirstOrDefaultAsync(m => m.Id == id);
-            var toUser = await _context.Users.FirstOrDefaultAsync(x => x.UserName == rewiew.Author.UserName);
+            var review = await _context.Reviews.FirstOrDefaultAsync(m => m.Id == id);
+            review.Author = _context.Users.FirstOrDefault(x => x.Id == review.AuthorId);
+            var toUser = await _context.Users.FirstOrDefaultAsync(x => x.UserName == review.Author.UserName);
             var like = new LikeModel()
             {
                 FromUser = user,
                 FromUserId = user.Id,
-                Review = rewiew,
+                Review = review,
                 ReviewId = id,
                 ToUser = toUser,
                 ToUserId = toUser.Id
-
             };
             toUser.LikesCount++;
             await _context.AddAsync(like);

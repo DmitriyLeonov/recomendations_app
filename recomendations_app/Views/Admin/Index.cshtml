@@ -29,7 +29,7 @@
                         @Html.DisplayFor(modelItem => item.Id)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.UserName)
+                        @Html.ActionLink(@item.UserName, "Index", "Users",new{name = item.UserName}, new { @class = "nav-link" })
                     </td>
                     <td>
                         <a asp-controller="Review" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

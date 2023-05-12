@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Recomendations_app.Data;
@@ -12,6 +13,7 @@ namespace Recomendations_app.Controllers
         {
             _context = context;
         }
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Index()
         {
             var users = await _context.Users.ToListAsync();
