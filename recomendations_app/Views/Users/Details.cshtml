@@ -1,4 +1,8 @@
-﻿@model Recomendations_app.Models.ReviewModel
+﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Security.Claims
+@model Recomendations_app.Models.ReviewModel
+@inject SignInManager<UserModel> SignInManager
 
 @{
     ViewData["Title"] = "Details";
@@ -8,7 +12,6 @@
 <h1>Details</h1>
 
 <div>
-    <h4>ReviewModel</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -41,21 +44,80 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.DateOfCreationInUTC)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AuthorName)
+       @* <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ImageStorageName)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AuthorName)
+            @Html.DisplayFor(model => model.ImageStorageName)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SearchVector)
+            @Html.DisplayNameFor(model => model.ImageLink)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SearchVector)
-        </dd>
+        <dd class="col-sm-10">
+            <img src="@Url.Content(Model.ImageLink)" alt="Image" style="width: 150px; height: 220px;"/>
+        </dd>*@
     </dl>
 </div>
+<form asp-action="AddLike">
+    @if (SignInManager.IsSignedIn(User) && @Model.Likes.Find(model => model.FromUserId == @User.FindFirst(ClaimTypes.NameIdentifier).Value) != null)
+    {
+        <input name="id" type="hidden" value="@Model.Id" />
+        <div class="ui labeled button mt-5 ml-5" tabindex="0" id="like">
+            <button type="submit" class="btn btn-outline-secondary btn-floating" disabled>
+                <i class="fa-solid fa-thumbs-up"></i>
+            </button>
+            <span class="ui basic blue label">@Model.Likes.Count</span>
+        </div>
+    }
+    else
+    {
+        <input name="id" type="hidden" value="@Model.Id" />
+        <div class="ui labeled button mt-5 ml-5" tabindex="0" id="like">
+            <button type="submit" class="btn btn-outline-secondary btn-floating">
+                <i class="fa-regular fa-thumbs-up"></i>
+            </button>
+            <span class="ui basic blue label">@Model.Likes.Count</span>
+        </div>
+    }
+</form>
+<form asp-action="AddComment">
+    <div class="container mt-5 mb-5">
+        <div class="row height d-flex justify-content-center align-items-center">
+            <div class="col-md-7">
+                <div class="card">
+                    <div class="p-3">
+                        <h6>Comments</h6>
+                    </div>
+                    <div class="mt-2" id="comments">
+                        @foreach (var comment in Model.Comments)
+                        {
+                            <div class="d-flex flex-row p-3">
+                                <div class="d-flex flex-row p-3">
+                                    <div class="w-100">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="d-flex flex-row align-items-center">
+                                                <span class="mr-2">@comment.AuthorName</span>
+                                            </div>
+                                            <small>@comment.DateOfCreationInUTC</small>
+                                        </div>
+                                        <p class="text-justify comment-text mb-0">@comment.CommentBody</p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <textarea name="commentText" class="form-control" required maxlength="255"></textarea>
+        <span asp-validation-for="Title" class="text-danger"></span>
+        <input name="id" type="hidden" value="@Model.Id"/>
+        <div class="form-group">
+            <input type="submit" value="Post comment" class="btn btn-outline-primary" />
+        </div>
+    </div>
+</form>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-controller="Home" asp-action="Index">Back to List</a>
 </div>

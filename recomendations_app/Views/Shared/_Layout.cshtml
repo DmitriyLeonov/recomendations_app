@@ -28,7 +28,7 @@
                         @if (SignInManager.IsSignedIn(User))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Users" asp-action="Index">My reviews</a>
+                                @Html.ActionLink("My reviews", "Index", "Users", new { name = @User.Identity?.Name }, new { @class = "nav-link" })
                             </li>
                         }
                     </ul>
