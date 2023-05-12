@@ -1,7 +1,10 @@
-﻿@{
+﻿@inject SignInManager<UserModel> SignInManager
+@{
     ViewData["Title"] = "Home Page";
 }
 
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model IEnumerable<Recomendations_app.Models.ReviewModel>
 
 @{
@@ -81,9 +84,12 @@
                 @Html.DisplayFor(modelItem => item.Author.Id)
                 </td>*@
                     <td>
-                        <a asp-controller="Review" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-controller="Review" asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-controller="Review" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <a asp-controller="Review" asp-action="Edit" asp-route-id="@item.Id">Edit</a> 
+                            <a asp-controller="Review" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        }
+                        <a asp-controller="Review" asp-action="Details" asp-route-id="@item.Id">Details</a>
                     </td>
                 </tr>
             }
