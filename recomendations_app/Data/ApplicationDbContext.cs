@@ -38,7 +38,6 @@ namespace Recomendations_app.Data
         public new DbSet<UserModel>? Users { get; set; }
         public DbSet<ReviewModel>? Reviews { get; set; } = null!;
         public DbSet<Comment>? Comments { get; set; }
-        public DbSet<GradeModel>? Grades { get; set; }
         public DbSet<TagModel>? Tags { get; set; } = null!;
         public DbSet<LikeModel>? Likes { get; set; }
         public DbSet<ImageModel>? Images { get; set; }

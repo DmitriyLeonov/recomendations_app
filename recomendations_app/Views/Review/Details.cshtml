@@ -44,6 +44,12 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.DateOfCreationInUTC)
         </dd>
+        <dt class="col-sm-2">
+            Rating:
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Comments.Average(x => x.UserRating)
+        </dd>
        @* <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.ImageStorageName)
         </dt>
@@ -109,7 +115,12 @@
                 </div>
             </div>
         </div>
+        <label>Rating</label><input name="rating" type="range" class="form-range" min="1" max="5" step="1" value="1" oninput="this.nextElementSibling.value = this.value">
+        <output>1</output>
+        <br />
         <textarea name="commentText" class="form-control" required maxlength="255"></textarea>
+        <br/>
+        
         <span asp-validation-for="Title" class="text-danger"></span>
         <input name="id" type="hidden" value="@Model.Id"/>
         <div class="form-group">

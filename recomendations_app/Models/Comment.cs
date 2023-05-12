@@ -13,6 +13,8 @@ namespace Recomendations_app.Models
         public string CommentBody { get; set; } = string.Empty;
         [Required]
         public DateTime DateOfCreationInUTC { get; set; }
+
+        public int UserRating { get; set; } = 0;
         [Required]
         public string AuthorName { get; set; } = string.Empty;
         public string ReviewId { get; set; }

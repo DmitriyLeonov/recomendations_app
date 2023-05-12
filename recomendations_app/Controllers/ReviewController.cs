@@ -209,7 +209,7 @@ namespace Recomendations_app.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        public async Task<IActionResult> AddComment(string commentText,string id)
+        public async Task<IActionResult> AddComment(int rating,string commentText,string id)
         {
             if (commentText != null)
             {
@@ -219,7 +219,8 @@ namespace Recomendations_app.Controllers
                     CommentBody = commentText,
                     DateOfCreationInUTC = DateTime.UtcNow,
                     Review = await _context.Reviews.FirstOrDefaultAsync(m => m.Id == id),
-                    ReviewId = id
+                    ReviewId = id,
+                    UserRating = rating
                 };
                 await _context.Comments.AddAsync(comment);
                 await _context.SaveChangesAsync();
