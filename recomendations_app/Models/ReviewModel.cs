@@ -28,13 +28,14 @@ namespace Recomendations_app.Models
         [Required]
         public DateTime DateOfCreationInUTC { get; set; }
 
-        [Required]
-        //public long SubjectId { get; set; }
-        //public SubjectModel Subject { get; set; } = new();
+        [Required(ErrorMessage = "This field is required")]
+        [MaxLength(255, ErrorMessage = "Maximum field length is 255")]
+        [MinLength(2, ErrorMessage = "Minimum field length is 2")]
+        public string Subject { get; set; }
         public List<ImageModel> Images { get; set; } = new();
         [Required]
-        public string AuthorName { get; set; } = string.Empty;
-        //public UserModel? Author { get; set; }
+        public string AuthorId { get; set; } = string.Empty;
+        public UserModel? Author { get; set; }
         public List<Comment> Comments { get; set; } = new();
 
         [MaxLength(15, ErrorMessage = "Max amount of tags is exceeded")]

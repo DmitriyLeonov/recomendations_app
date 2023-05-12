@@ -25,12 +25,17 @@ namespace Recomendations_app.Controllers
         // GET: Users
         public async Task<IActionResult> Index(string name)
         {
-            var reviews = _context.Reviews
+            var reviews = await _context.Reviews
                 .Include(r => r.Comments)
                 .Include(r => r.Tags)
                 .Include(r => r.Likes)
-                .Include(r => r.Images).Where(x => x.AuthorName == name);
-            return View(await reviews.ToListAsync());
+                .Include(r => r.Images)
+                .Where(x => x.Author.UserName == name).ToListAsync();
+            foreach (var review in reviews)
+            {
+                review.Author = _context.Users.FirstOrDefault(x => x.UserName == name);
+            }
+            return View(reviews);
         }
     }
 }

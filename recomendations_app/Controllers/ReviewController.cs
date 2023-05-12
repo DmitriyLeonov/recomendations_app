@@ -39,6 +39,10 @@ namespace Recomendations_app.Controllers
                     .Include(r => r.Tags)
                     .Include(r => r.Likes)
                     .Include(r => r.Images).ToList();
+                foreach (var review in result)
+                {
+                    review.Author = _context.Users.FirstOrDefault(x => x.Id == review.AuthorId);
+                }
             }
             return View(result);
         }
@@ -75,11 +79,13 @@ namespace Recomendations_app.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,ReviewCategory,AuthorGrade,ReviewBody,DateOfCreationInUTC,AuthorName,Images")] ReviewModel reviewModel, string tags, IFormFile[] images)
+        public async Task<IActionResult> Create([Bind("Id,Title,ReviewCategory,Subject,AuthorGrade,ReviewBody,DateOfCreationInUTC,AuthorName,Images")] ReviewModel reviewModel, string tags, IFormFile[] images)
         {
             var tagList = await AddTagToDb(tags);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == this.User.Identity.Name);
             reviewModel.Id = Guid.NewGuid().ToString();
-            reviewModel.AuthorName = this.User.Identity.Name;
+            reviewModel.Author = user;
+            reviewModel.AuthorId = user.Id;
             reviewModel.DateOfCreationInUTC = DateTime.UtcNow;
             if (!ModelState.IsValid)
             {
@@ -118,7 +124,7 @@ namespace Recomendations_app.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Title,ReviewCategory,AuthorGrade,ReviewBody,DateOfCreationInUTC,SubjectId,ImageStorageName,ImageLink,ImageFile,AuthorName")] ReviewModel reviewModel)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,Title,ReviewCategory,AuthorGrade,ReviewBody,DateOfCreationInUTC,Subject,ImageStorageName,ImageLink,ImageFile,AuthorName")] ReviewModel reviewModel)
         {
             if (id != reviewModel.Id)
             {
@@ -182,7 +188,7 @@ namespace Recomendations_app.Controllers
                 .Include(r => r.Tags)
                 .Include(r => r.Likes)
                 .Include(r => r.Images).FirstOrDefaultAsync(x => x.Id == id);
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == reviewModel.AuthorName);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == reviewModel.AuthorId);
             user.LikesCount -= reviewModel.Likes.Count;
             if (reviewModel != null)
             {
@@ -224,7 +230,7 @@ namespace Recomendations_app.Controllers
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == this.User.Identity.Name);
             var rewiew = await _context.Reviews.FirstOrDefaultAsync(m => m.Id == id);
-            var toUser = await _context.Users.FirstOrDefaultAsync(x => x.UserName == rewiew.AuthorName);
+            var toUser = await _context.Users.FirstOrDefaultAsync(x => x.UserName == rewiew.Author.UserName);
             var like = new LikeModel()
             {
                 FromUser = user,

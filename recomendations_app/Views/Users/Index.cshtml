@@ -10,6 +10,10 @@
 }
 
 <h1>@User.Identity?.Name</h1>
+<br/>
+<p>
+    <a asp-controller="Review" asp-action="Create">Create New</a>
+</p>
 
 <div id="block">
     <table class="table">
@@ -25,7 +29,7 @@
                     @Html.DisplayNameFor(model => model.AuthorGrade)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.AuthorName)
+                    @Html.DisplayNameFor(model => model.Author.UserName)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.ReviewBody)
@@ -33,18 +37,18 @@
                 <th>
                     @Html.DisplayNameFor(model => model.DateOfCreationInUTC)
                 </th>
-                @*<th>
+                <th>
                 @Html.DisplayNameFor(model => model.Subject)
-                </th>*@
+                </th>
                 <th>
                     Tags
                 </th>
-                @*<th>
-                @Html.DisplayNameFor(model => model.ImageLink)
-                </th>*@
-                @*<th>
-                @Html.DisplayNameFor(model => model.Author)
-                </th>*@
+                <th>
+                    Images
+                </th>
+                <th>
+                @Html.DisplayNameFor(model => model.Author.UserName)
+                </th>
                 <th></th>
             </tr>
         </thead>
@@ -62,7 +66,7 @@
                         @Html.DisplayFor(modelItem => item.AuthorGrade)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.AuthorName)
+                        @Html.DisplayFor(modelItem => item.Author.UserName)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.ReviewBody)
@@ -71,21 +75,34 @@
                         @Html.DisplayFor(modelItem => item.DateOfCreationInUTC)
                     </td>
                     <td>
+                        @Html.DisplayFor(modelItem => item.Subject)
+                    </td>
+                    <td>
                         @foreach (var tag in item.Tags)
                         {
                             <b>@tag.Name</b>
                         }
                     </td>
-                    @* @if (item.ImageLink != null)
+                     @if (item.Images != null)
                 {
-                <td>
-                <img src="@Url.Content(item.ImageLink)" alt="Image" style="width: 150px; height: 220px;" />
-                </td>
+                    @foreach (var image in item.Images)
+                    {
+                        <td>
+                            <img src="@Url.Content(image.ImageLink)" alt="Image" style="width: 150px; height: 220px;" />
+                        </td>
+                    }
+                
                 }
-                @**@
-                    @*<td>
-                @Html.DisplayFor(modelItem => item.Author.Id)
-                </td>*@
+                     <td>
+                        @Html.DisplayFor(modelItem => item.Author.UserName)
+                        <input name="id" type="hidden"/>
+                        <div class="ui labeled button mt-5 ml-5" tabindex="0" id="like">
+                            <button type="submit" class="btn btn-outline-secondary btn-floating" disabled>
+                                <i class="fa-solid fa-thumbs-up"></i>
+                            </button>
+                            <span class="ui basic blue label">@Html.DisplayFor(modelItem => item.Author.LikesCount)</span>
+                        </div>
+                     </td>
                     <td>
                         <a asp-controller="Review" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                         <a asp-controller="Review" asp-action="Details" asp-route-id="@item.Id">Details</a> |

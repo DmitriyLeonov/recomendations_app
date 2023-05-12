@@ -9,9 +9,6 @@ namespace Recomendations_app.Models
         [Range(1, 5)]
         public int Value { get; set; }
         [Required]
-        public long SubjectId { get; set; }
-        public SubjectModel? Subject { get; set; }
-        [Required]
         public string AuthorName { get; set; } = string.Empty;
         public UserModel? Author { get; set; }
     }
