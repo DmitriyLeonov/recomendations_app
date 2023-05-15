@@ -43,9 +43,7 @@
                 <th>
                     @Html.DisplayNameFor(model => model.UserName)
                 </th>
-                <th>
-                    Review Body
-                </th>
+                
                 <th>
                     DateOfCreationInUTC
                 </th>
@@ -79,9 +77,6 @@
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Author.UserName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ReviewBody)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.DateOfCreationInUTC)
