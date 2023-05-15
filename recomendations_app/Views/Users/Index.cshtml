@@ -2,43 +2,55 @@
     ViewData["Title"] = "Home Page";
 }
 
-@model IEnumerable<Recomendations_app.Models.ReviewModel>
+@model UserModel
 
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>@User.Identity?.Name</h1>
 <br/>
+@if (@User.IsInRole("Administrator") || @User.Identity.Name.Equals(@Model.UserName))
+{
+    <p>
+        @Html.ActionLink("Create new", "Create", "Review", new { name = @Model.UserName })
+    </p>
+}
 <p>
-    <a asp-controller="Review" asp-action="Create">Create New</a>
+    @Html.ActionLink("User rate", "Index", new { sortOrder = ViewBag.RateSortParm })
+    @Html.ActionLink("Creation Date", "Index", new { sortOrder = ViewBag.DateSortParm })
+    
+        <form method="get">
+            <label class="control-label">minimum rate</label>
+            <input type="text" class="form-control" name="rate">
+            <input type="hidden" name="name" value=@Model.UserName />
+            <input type="submit" class="btn btn-outline-success" value="Filter category"/>
+        </form>
 </p>
-
 <div id="block">
     <table class="table">
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.Title)
+                    Title
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.ReviewCategory)
+                    Category
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.AuthorGrade)
+                    Author Grade
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Author.UserName)
+                    @Html.DisplayNameFor(model => model.UserName)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.ReviewBody)
+                    Review Body
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.DateOfCreationInUTC)
+                    DateOfCreationInUTC
                 </th>
                 <th>
-                @Html.DisplayNameFor(model => model.Subject)
+                    Subject
                 </th>
                 <th>
                     Tags
@@ -47,13 +59,13 @@
                     Image
                 </th>
                 <th>
-                @Html.DisplayNameFor(model => model.Author.UserName)
+                @Html.DisplayNameFor(model => model.UserName)
                 </th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in Model.Reviews)
             {
                 <tr>
                     <td>

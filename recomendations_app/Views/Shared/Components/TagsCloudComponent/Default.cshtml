@@ -1,0 +1,12 @@
+﻿@model IEnumerable<Recomendations_app.Models.TagModel>
+
+<div class="card" id="block">
+    <div class="card-body">
+        <h5 class="card-title"></h5>
+        @foreach (var tag in @Model)
+        {
+            <a href="#0" class="link-success link-offset-2 link-underline-opacity-0 link-underline-opacity-25-hover">@tag.Name</a>
+        }
+    </div>
+</div>
+

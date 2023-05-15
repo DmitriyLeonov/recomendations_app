@@ -29,12 +29,15 @@
                         @Html.DisplayFor(modelItem => item.Id)
                     </td>
                     <td>
-                        @Html.ActionLink(@item.UserName, "Index", "Users",new{name = item.UserName}, new { @class = "nav-link" })
+                        @Html.ActionLink(@item.UserName, "Index", "Users", new { name = item.UserName }, new { @class = "nav-link" })
                     </td>
                     <td>
-                        <a asp-controller="Review" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-controller="Review" asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-controller="Review" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        <form>
+                            <input type="hidden" name="selectedUser" value="@item.UserName" />
+                            <button type="submit" formaction="@Url.Action("MakeAdmin")" formmethod="post" class="btn">Block</button> |
+                            <button type="submit" formaction="@Url.Action("Block")" formmethod="post" class="btn">Block</button> |
+                            <button type="submit" formaction="@Url.Action("Delete")" formmethod="post" class="btn">Delete</button>
+                        </form>
                     </td>
                 </tr>
             }

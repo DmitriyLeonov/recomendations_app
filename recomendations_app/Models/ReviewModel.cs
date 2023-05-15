@@ -35,7 +35,8 @@ namespace Recomendations_app.Models
         public List<ImageModel> Images { get; set; } = new();
         [Required]
         public string AuthorId { get; set; } = string.Empty;
-        public UserModel? Author { get; set; }
+
+        public UserModel? Author { get; set; } = new();
         public List<Comment> Comments { get; set; } = new();
 
         [MaxLength(15, ErrorMessage = "Max amount of tags is exceeded")]

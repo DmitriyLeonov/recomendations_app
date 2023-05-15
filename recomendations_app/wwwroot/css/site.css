@@ -87,3 +87,24 @@ body {
     font-size: 14px;
     margin-top: 12px;
 }
+
+.gallery5 {
+     overflow: hidden;
+     width: 480px;
+ }
+
+.gallery5 .ramka {
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.gallery5 img {
+    width: 135px;
+    height: 240px;
+    object-fit: cover;
+}
+
+.md-editor .dropdown-menu li {
+    cursor: pointer;
+}

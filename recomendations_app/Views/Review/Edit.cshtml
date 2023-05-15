@@ -21,11 +21,6 @@
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
-            @*<div class="form-group">
-                <label asp-for="AuthorName" class="control-label"></label>
-                <select asp-for="AuthorName" class="form-control" asp-items="ViewBag.AuthorName"></select>
-                <span asp-validation-for="AuthorName" class="text-danger"></span>
-            </div>*@
             <div class="form-group">
                 <label asp-for="ReviewCategory" class="control-label"></label>
                 <select asp-for="ReviewCategory" class="form-control" asp-items="Html.GetEnumSelectList<Category>()"></select>
@@ -38,7 +33,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="ReviewBody" class="control-label"></label>
-                <input asp-for="ReviewBody" class="form-control" />
+                <textarea asp-for="ReviewBody" id="editor" class="form-control"></textarea>
                 <span asp-validation-for="ReviewBody" class="text-danger"></span>
             </div>
            

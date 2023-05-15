@@ -17,14 +17,35 @@ namespace Recomendations_app.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder)
         {
-            var reviews = _context.Reviews
+            ViewBag.RateSortParm = String.IsNullOrEmpty(sortOrder) ? "rate_desc" : "";
+            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+            var reviews = await _context.Reviews
                 .Include(r => r.Comments)
                 .Include(r => r.Tags)
                 .Include(r => r.Likes)
-                .Include(r => r.Images);
-            return View(await reviews.ToListAsync());
+                .Include(r => r.Images).ToListAsync();
+            foreach (var review in reviews)
+            {
+                review.Author = await _context.Users.FirstOrDefaultAsync(u => u.Id == review.AuthorId);
+            }
+            switch (sortOrder)
+            { 
+                case "rate_desc":
+                    reviews = reviews.OrderByDescending(s => s.AuthorGrade).ToList();
+                    break;
+                case "Date":
+                    reviews = reviews.OrderBy(s => s.DateOfCreationInUTC).ToList();
+                    break;
+                case "date_desc":
+                    reviews = reviews.OrderByDescending(s => s.DateOfCreationInUTC).ToList();
+                    break;
+                default:
+                    reviews = reviews.OrderBy(s => s.AuthorGrade).ToList();
+                    break;
+        }
+            return View(reviews);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

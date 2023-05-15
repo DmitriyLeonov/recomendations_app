@@ -26,22 +26,31 @@ namespace Recomendations_app.Controllers
             _cloudStorage = cloudStorage;
         }
 
-        public ActionResult Index(string query)
+        public async Task<IActionResult> Index(string query)
         {
             var result = new List<ReviewModel>();
+            var commentsResult = new List<ReviewModel>();
             if (!query.IsNullOrEmpty())
             {
                 query = query.Trim();
                 query = query.Replace(" ", " <-> ");
-                result = _context.Reviews.Where(x =>
+                result = await _context.Reviews.Where(x =>
                     x.SearchVector.Matches(EF.Functions.ToTsQuery($"{query}:*")))
                     .Include(r => r.Comments)
                     .Include(r => r.Tags)
                     .Include(r => r.Likes)
-                    .Include(r => r.Images).ToList();
+                    .Include(r => r.Images).ToListAsync();
+                var comments = await _context.Comments.Where(c =>
+                    c.SearchVector.Matches(EF.Functions.ToTsQuery($"{query}:*")))
+                    .Include(c => c.Review).ToListAsync();
+                foreach (var comment in comments)
+                {
+                    commentsResult.Add(comment.Review);
+                }
+                result = result.Union(commentsResult).ToList();
                 foreach (var review in result)
                 {
-                    review.Author = _context.Users.FirstOrDefault(x => x.Id == review.AuthorId);
+                    review.Author = await _context.Users.FirstOrDefaultAsync(x => x.Id == review.AuthorId);
                 }
             }
             return View(result);
@@ -69,8 +78,9 @@ namespace Recomendations_app.Controllers
         }
 
         // GET: Review/Create
-        public IActionResult Create()
+        public IActionResult Create(string name)
         {
+            ViewData["userName"] = name;
             return View();
         }
 
@@ -79,10 +89,10 @@ namespace Recomendations_app.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,ReviewCategory,Subject,AuthorGrade,ReviewBody,DateOfCreationInUTC,AuthorName,Images")] ReviewModel reviewModel, string tags, IFormFile[] images)
+        public async Task<IActionResult> Create([Bind("Id,Title,ReviewCategory,Subject,AuthorGrade,ReviewBody,DateOfCreationInUTC,AuthorName,Images")] ReviewModel reviewModel, string tags, IFormFile[] images, string userName)
         {
             var tagList = await AddTagToDb(tags);
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == this.User.Identity.Name);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == userName);
             reviewModel.Id = Guid.NewGuid().ToString();
             reviewModel.Author = user;
             reviewModel.AuthorId = user.Id;
@@ -98,7 +108,6 @@ namespace Recomendations_app.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index","Home");
             }
-            //ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name", reviewModel.SubjectId);
             return View(reviewModel);
         }
 
@@ -109,7 +118,6 @@ namespace Recomendations_app.Controllers
             {
                 return NotFound();
             }
-
             var reviews = await _context.Reviews.Include(r => r.Tags).ToListAsync();
             var reviewModel = reviews.Where(r => r.Id == id).FirstOrDefault();
             if (reviewModel == null)

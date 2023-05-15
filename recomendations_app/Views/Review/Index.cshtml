@@ -13,68 +13,47 @@
 <h1>Search result</h1>
 @if (!Model.IsNullOrEmpty())
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Title)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ReviewCategory)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.AuthorGrade)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ReviewBody)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.DateOfCreationInUTC)
-                </th>
-                
-                @*<th>
-                    @Html.DisplayNameFor(model => model.ImageLink)
-                </th>*@
-               
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Title)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ReviewCategory)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.AuthorGrade)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ReviewBody)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.DateOfCreationInUTC)
-                    </td>
-                
-                    @*@if (item.ImageLink != null)
-                    {
-                        <td>
-                            <img src="@Url.Content(item.ImageLink)" alt="Image" style="width: 150px; height: 220px;"/>
-                        </td>
-                    }*@
-                  
-                    <td>
-                        <a asp-controller="Review" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-controller="Review" asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-controller="Review" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    @foreach (var item in Model)
+    {
+        <div class="card border-success mb-3" style="max-width: 540px;">
+            <div class="row g-0">
+                <div class="col-md-4 ramka">
+                    <img src="@Url.Content(item.Images[0].ImageLink)" class="card-img-top" alt="...">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            @item.Title Avg.rating:
+                            @if (@item.Comments.Count != 0)
+                            {
+                                @item.Comments.Average(x => x.UserRating)
+                            }
+                            else
+                            {
+                                <b>0</b>
+                            }
+                        </h5>
+                        <p class="card-text">@item.ReviewBody</p>
+                        <p class="card-text">
+                            <small class="text-muted">Created @item.DateOfCreationInUTC</small>
+                        </p>
+                        <p class="card-text">
+                            <small class="text-muted">Author @item.Author.UserName likes: @item.Author.LikesCount</small>
+                        </p>
+                        <p class="card-text">
+                            <small class="text-muted">Author rate @item.AuthorGrade</small>
+                        </p>
+                        <p class="card-text">
+                            @foreach (var tag in item.Tags)
+                            {
+                                <small class="text-muted">@tag.Name</small>
+                            }
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 }
 else
 {
